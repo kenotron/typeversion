@@ -13,15 +13,15 @@ const rule: Rule = {
       messages: [],
     };
 
-    const srcExportedNames = new Set(base.exports.map((e) => e.escapedName));
-    const dstExportedNames = new Set(target.exports.map((e) => e.escapedName));
+    const baseExportedNames = new Set(base.exports.map((e) => e.escapedName));
+    const targetExportedNames = new Set(target.exports.map((e) => e.escapedName));
 
-    for (const srcExport of srcExportedNames) {
-      const dstExport = dstExportedNames.has(srcExport);
-      if (!dstExport) {
+    for (const baseExport of baseExportedNames) {
+      const targetExport = targetExportedNames.has(baseExport);
+      if (!targetExport) {
         results.minChangeType = "major";
         results.messages.push(
-          `Export ${srcExport} was removed from ${base.source} but not from ${target.source}`
+          `Export "${baseExport}" was removed from ${target.source}`
         );
       }
     }

@@ -1,8 +1,9 @@
-import { initializeContext } from "./engines/typescript";
-import { Rule, RuleResult } from "./types";
+import type { Rule, RuleResult } from "./types";
+
+import { initializeContext } from "./engines/typescript/init";
+
 import fs from "fs";
 import path from "path";
-import { __dirname } from "./esm-goop";
 
 export async function compare(options: {
   root: string;
@@ -25,10 +26,10 @@ export async function compare(options: {
 }
 
 async function getRules() {
-  const files = fs.readdirSync(__dirname(import.meta.url));
+  const files = fs.readdirSync(path.join(__dirname, "rules"));
   const rules: Rule[] = [];
   for (const file of files) {
-    const rule = (await import(path.join(__dirname(import.meta.url), file)))
+    const rule = (await import(path.join(__dirname, "rules", file)))
       .default as Rule;
 
     rules.push(rule);

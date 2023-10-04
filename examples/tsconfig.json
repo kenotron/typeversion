@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "ES2015",
     "moduleResolution": "Node",
     "outDir": "lib",
     "declaration": true,
@@ -9,5 +9,5 @@
     "lib": [],
     "isolatedModules": true,
   },
-  "include": ["*.d.ts", "before.d.ts"]
+  "include": ["source.ts"]
 }
