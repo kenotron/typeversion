@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "lib",
+    "declaration": true,
+    "skipDefaultLibCheck": true,
+    "lib": [],
+    "isolatedModules": true,
+  },
+  "include": ["*.d.ts", "before.d.ts"]
+}
