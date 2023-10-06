@@ -22,7 +22,7 @@ export async function compare(options: {
     results.push(await rule.check(context));
   }
 
-  return results;
+  return mergeResults(results);
 }
 
 async function getRules() {
@@ -35,4 +35,20 @@ async function getRules() {
     rules.push(rule);
   }
   return rules;
+}
+
+function mergeResults(results: RuleResult[]) {
+  return results.reduce((acc, curr) => {
+    if (curr.minChangeType === "major") {
+      acc.minChangeType = "major";
+    } else if (curr.minChangeType === "minor" && acc.minChangeType !== "major") {
+      acc.minChangeType = "minor";
+    } else if (curr.minChangeType === "patch" && acc.minChangeType === "none") {
+      acc.minChangeType = "patch";
+    }
+
+    acc.messages = [...acc.messages, ...curr.messages];
+
+    return acc;
+  }, { minChangeType: "none", messages: [] } as RuleResult);
 }

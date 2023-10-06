@@ -4,6 +4,7 @@ export interface Rule {
   name: string;
   description: string;
   check: RuleChecker;
+
 }
 
 export interface RuleChecker {
@@ -18,12 +19,14 @@ export interface RuleContext {
       source: string;
       exports: ts.Symbol[];
       checker: ts.TypeChecker;
+      program: ts.Program;
     };
 
     target: {
       source: string;
       exports: ts.Symbol[];
       checker: ts.TypeChecker;
+      program: ts.Program;
     };
   };
 }

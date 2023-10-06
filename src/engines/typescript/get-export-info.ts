@@ -28,5 +28,5 @@ export function getExportInfo(root: string, src: string) {
   let sourceFileSymbol = checker.getSymbolAtLocation(sourceFile);
   let srcExports = checker.getExportsOfModule(sourceFileSymbol);
 
-  return { exports: srcExports, checker };
+  return { exports: srcExports, checker, program };
 }
