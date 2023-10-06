@@ -3,6 +3,12 @@
 
 import { Config as BackfillCacheOptions, CustomStorageConfig } from './backfill-config.js';
 
+export interface F {
+	a: string;
+	b: number;
+}
+
+
 type LageBackfillCacheOptions = Omit<BackfillCacheOptions, "cacheStorageConfig"> & {
 	cacheStorageConfig: Exclude<BackfillCacheOptions["cacheStorageConfig"], CustomStorageConfig>;
 };

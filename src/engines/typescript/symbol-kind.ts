@@ -38,3 +38,11 @@ export function isTypeAlias(symbol: ts.Symbol) {
 export function isTypeLiteral(symbol: ts.Symbol) {
   return !!(symbol.getFlags() & ts.SymbolFlags.TypeLiteral);
 }
+
+export function isObjectType(symbol: ts.Symbol) {
+  return isClass(symbol) || isInterface(symbol) || isTypeLiteral(symbol);
+}
+
+export function isUserConstructible(symbol: ts.Symbol) {
+  return isInterface(symbol) || isTypeLiteral(symbol);
+}

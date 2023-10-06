@@ -11,6 +11,14 @@ export function getResolvedType(
     const objectType = type as ts.ObjectType;
     if (objectType.objectFlags & ts.ObjectFlags.Reference) {
       const referenceType = objectType as ts.TypeReference;
+
+      const hasTypeArgs =
+        referenceType.typeArguments && referenceType.typeArguments.length > 0;
+
+      if (!hasTypeArgs) {
+        return checker.typeToString(type);
+      }
+
       const resolvedTypeArguments = referenceType.typeArguments?.map((type) =>
         getResolvedType(type, checker, program)
       );
@@ -53,7 +61,7 @@ export function getResolvedType(
         if (isPropertyPrivate(member)) {
           return;
         }
-        
+
         const memberType = checker.getTypeOfSymbolAtLocation(
           member,
           member.valueDeclaration!

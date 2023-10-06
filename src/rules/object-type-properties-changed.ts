@@ -1,17 +1,14 @@
 import ts from "typescript";
-import {
-  isClass,
-  isInterface,
-  isTypeLiteral,
-} from "../engines/typescript/symbol-kind";
+import { isObjectType } from "../engines/typescript/symbol-kind";
 import { Rule, RuleResult } from "../types";
 import { getResolvedType } from "../engines/typescript/resolve-type-structure";
-import { isPropertyPrivate } from "../engines/typescript/is-property-private";
+import { getTypeOfExport } from "../engines/typescript/get-type-of-export";
+import { collectProperties } from "../engines/typescript/collect-properties-of-object-type";
 
 const rule: Rule = {
   name: "symbol-kind-changed",
   description:
-    "Symbol kind changed between value (let, const, class, function) and type (interace, type alias, etc.)",
+    "Object type properties that have changed in the types or have been removed",
   async check(context) {
     const {
       typescript: { base, target },
@@ -44,23 +41,26 @@ const rule: Rule = {
         const baseProps = collectProperties(baseExportType, base.checker);
         const targetProps = collectProperties(targetExportType, target.checker);
 
-        for (const [name, baseProp] of Object.entries(baseProps)) {
-          const targetProp = targetProps[name];
+        // Check for changes in property types
+        for (const [propName, baseProp] of Object.entries(baseProps)) {
+          const targetProp = targetProps[propName];
           if (!targetProp) {
             results.minChangeType = "major";
-            results.messages.push(`Property ${name} has been removed`);
+            results.messages.push(
+              `Property "${propName}" has been removed from "${name}`
+            );
             continue;
           }
 
           const result = comparePropertyTypes(
-            name,
+            propName,
             {
-              type: baseProp,
+              type: baseProp.type,
               checker: base.checker,
               program: base.program,
             },
             {
-              type: targetProp,
+              type: targetProp.type,
               checker: target.checker,
               program: target.program,
             }
@@ -77,47 +77,6 @@ const rule: Rule = {
     return results;
   },
 };
-
-function isObjectType(symbol: ts.Symbol) {
-  return isClass(symbol) || isInterface(symbol) || isTypeLiteral(symbol);
-}
-
-function getTypeOfExport(exportSymbol: ts.Symbol, checker: ts.TypeChecker) {
-  // Find the declaration from baseExport that is a type
-  let typeDeclaration: ts.Declaration;
-  for (const declaration of exportSymbol.declarations) {
-    if (
-      ts.isTypeAliasDeclaration(declaration) ||
-      ts.isInterfaceDeclaration(declaration) ||
-      ts.isClassDeclaration(declaration) ||
-      ts.isTypeLiteralNode(declaration)
-    ) {
-      typeDeclaration = declaration;
-    }
-  }
-
-  if (typeDeclaration) {
-    return checker.getTypeAtLocation(typeDeclaration);
-  }
-}
-
-// Recursively collect all properties of a type
-function collectProperties(type: ts.Type, checker: ts.TypeChecker) {
-  const properties: Record<string, ts.Type> = {};
-  type
-    .getProperties()
-    .sort((a, b) => (a.escapedName > b.escapedName ? 1 : -1))
-    .forEach((property) => {
-      if (isPropertyPrivate(property)) {
-        return;
-      }
-
-      const propertyType = checker.getTypeOfSymbol(property);
-      properties[property.name] = propertyType;
-    });
-
-  return properties;
-}
 
 export default rule;
 
