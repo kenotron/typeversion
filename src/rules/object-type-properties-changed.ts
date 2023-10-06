@@ -5,16 +5,8 @@ import {
   isTypeLiteral,
 } from "../engines/typescript/symbol-kind";
 import { Rule, RuleResult } from "../types";
-import jsonDiff from "json-diff";
 import { getResolvedType } from "../engines/typescript/resolve-type-structure";
 import { isPropertyPrivate } from "../engines/typescript/is-property-private";
-
-/** Tree structure that represents the public & protected members for exports that are ObjectTypes  */
-type PropertyNode = {
-  name: string;
-  type: string;
-  children: PropertyNode[];
-};
 
 const rule: Rule = {
   name: "symbol-kind-changed",
@@ -42,38 +34,43 @@ const rule: Rule = {
           continue;
         }
 
-        const baseExportDeclaration = getTypeDeclarationOfExport(baseExport);
-        const baseExportType = base.checker.getTypeAtLocation(
-          baseExportDeclaration
-        );
+        const baseExportType = getTypeOfExport(baseExport, base.checker);
+        const targetExportType = getTypeOfExport(targetExport, target.checker);
 
-        const basePropertyNode: PropertyNode = {
-          name: baseExport.name,
-          type: base.checker.typeToString(baseExportType),
-          children: [],
-        };
+        if (!baseExportType || !targetExportType) {
+          throw new Error(`unable to determine type of the export: ${name}`);
+        }
 
-        collectProperties(basePropertyNode, baseExportType, base.checker, base.program);
+        const baseProps = collectProperties(baseExportType, base.checker);
+        const targetProps = collectProperties(targetExportType, target.checker);
 
-        const targetExportDeclaration =
-          getTypeDeclarationOfExport(targetExport);
-        const targetExportType = target.checker.getTypeAtLocation(
-          targetExportDeclaration
-        );
+        for (const [name, baseProp] of Object.entries(baseProps)) {
+          const targetProp = targetProps[name];
+          if (!targetProp) {
+            results.minChangeType = "major";
+            results.messages.push(`Property ${name} has been removed`);
+            continue;
+          }
 
-        const targetPropertyNode: PropertyNode = {
-          name: targetExport.name,
-          type: target.checker.typeToString(targetExportType),
-          children: [],
-        };
+          const result = comparePropertyTypes(
+            name,
+            {
+              type: baseProp,
+              checker: base.checker,
+              program: base.program,
+            },
+            {
+              type: targetProp,
+              checker: target.checker,
+              program: target.program,
+            }
+          );
 
-        collectProperties(targetPropertyNode, targetExportType, target.checker, target.program);
-
-        const diff = jsonDiff.diff(basePropertyNode, targetPropertyNode, {
-          full: true,
-        });
-
-        // console.log(JSON.stringify(diff, null, 2));
+          if (result) {
+            results.minChangeType = "major";
+            results.messages.push(result.message);
+          }
+        }
       }
     }
 
@@ -85,7 +82,7 @@ function isObjectType(symbol: ts.Symbol) {
   return isClass(symbol) || isInterface(symbol) || isTypeLiteral(symbol);
 }
 
-function getTypeDeclarationOfExport(exportSymbol: ts.Symbol) {
+function getTypeOfExport(exportSymbol: ts.Symbol, checker: ts.TypeChecker) {
   // Find the declaration from baseExport that is a type
   let typeDeclaration: ts.Declaration;
   for (const declaration of exportSymbol.declarations) {
@@ -98,16 +95,15 @@ function getTypeDeclarationOfExport(exportSymbol: ts.Symbol) {
       typeDeclaration = declaration;
     }
   }
-  return typeDeclaration;
+
+  if (typeDeclaration) {
+    return checker.getTypeAtLocation(typeDeclaration);
+  }
 }
 
 // Recursively collect all properties of a type
-function collectProperties(
-  propertyNode: PropertyNode,
-  type: ts.Type,
-  checker: ts.TypeChecker,
-  program: ts.Program
-) {
+function collectProperties(type: ts.Type, checker: ts.TypeChecker) {
+  const properties: Record<string, ts.Type> = {};
   type
     .getProperties()
     .sort((a, b) => (a.escapedName > b.escapedName ? 1 : -1))
@@ -117,22 +113,30 @@ function collectProperties(
       }
 
       const propertyType = checker.getTypeOfSymbol(property);
-
-      console.log(property.name, getResolvedType(propertyType, checker, program));
-
-      // const child: PropertyNode = {
-      //   name: property.name,
-      //   type: checker.typeToString(propertyType),
-      //   children: [],
-      // };
-
-      // propertyNode.children.push(child);
-
-      // if (!!(propertyType.getFlags() & ts.TypeFlags.Object)) {
-      //   child.type = "Object";
-      //   collectProperties(child, propertyType, checker, program);
-      // }
+      properties[property.name] = propertyType;
     });
+
+  return properties;
 }
 
 export default rule;
+
+function comparePropertyTypes(
+  name: string,
+  base: { type: ts.Type; checker: ts.TypeChecker; program: ts.Program },
+  target: { type: ts.Type; checker: ts.TypeChecker; program: ts.Program }
+) {
+  const baseTypeString = getResolvedType(base.type, base.checker, base.program);
+  const targetTypeString = getResolvedType(
+    target.type,
+    target.checker,
+    target.program
+  );
+
+  if (baseTypeString !== targetTypeString) {
+    return {
+      minChangeType: "major",
+      message: `Property ${name} has changed type from ${baseTypeString} to ${targetTypeString}`,
+    };
+  }
+}

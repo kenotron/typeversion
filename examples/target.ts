@@ -1,3 +1,4 @@
-export class Face {
-  a: Map<string, string[]>;
+import { Foo } from "./common";
+export interface Mine extends Foo {
+  a: string | number;
 }
