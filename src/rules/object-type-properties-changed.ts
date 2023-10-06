@@ -7,6 +7,7 @@ import {
 import { Rule, RuleResult } from "../types";
 import jsonDiff from "json-diff";
 import { getResolvedType } from "../engines/typescript/resolve-type-structure";
+import { isPropertyPrivate } from "../engines/typescript/is-property-private";
 
 /** Tree structure that represents the public & protected members for exports that are ObjectTypes  */
 type PropertyNode = {
@@ -52,7 +53,7 @@ const rule: Rule = {
           children: [],
         };
 
-        collectProperties(basePropertyNode, baseExportType, base.checker);
+        collectProperties(basePropertyNode, baseExportType, base.checker, base.program);
 
         const targetExportDeclaration =
           getTypeDeclarationOfExport(targetExport);
@@ -66,7 +67,7 @@ const rule: Rule = {
           children: [],
         };
 
-        collectProperties(targetPropertyNode, targetExportType, target.checker);
+        collectProperties(targetPropertyNode, targetExportType, target.checker, target.program);
 
         const diff = jsonDiff.diff(basePropertyNode, targetPropertyNode, {
           full: true,
@@ -104,7 +105,8 @@ function getTypeDeclarationOfExport(exportSymbol: ts.Symbol) {
 function collectProperties(
   propertyNode: PropertyNode,
   type: ts.Type,
-  checker: ts.TypeChecker
+  checker: ts.TypeChecker,
+  program: ts.Program
 ) {
   type
     .getProperties()
@@ -116,34 +118,21 @@ function collectProperties(
 
       const propertyType = checker.getTypeOfSymbol(property);
 
-      console.log(property.name, getResolvedType(propertyType, checker));
+      console.log(property.name, getResolvedType(propertyType, checker, program));
 
-      const child: PropertyNode = {
-        name: property.name,
-        type: checker.typeToString(propertyType),
-        children: [],
-      };
+      // const child: PropertyNode = {
+      //   name: property.name,
+      //   type: checker.typeToString(propertyType),
+      //   children: [],
+      // };
 
-      propertyNode.children.push(child);
+      // propertyNode.children.push(child);
 
-      if (!!(propertyType.getFlags() & ts.TypeFlags.Object)) {
-        child.type = "Object";
-        collectProperties(child, propertyType, checker);
-      }
+      // if (!!(propertyType.getFlags() & ts.TypeFlags.Object)) {
+      //   child.type = "Object";
+      //   collectProperties(child, propertyType, checker, program);
+      // }
     });
-}
-
-function isPropertyPrivate(property: ts.Symbol) {
-  const declarations = property.getDeclarations();
-  let isPrivateFlag = false;
-
-  for (const declaration of declarations) {
-    isPrivateFlag =
-      isPrivateFlag ||
-      !!(ts.getCombinedModifierFlags(declaration) & ts.ModifierFlags.Private);
-  }
-
-  return isPrivateFlag;
 }
 
 export default rule;

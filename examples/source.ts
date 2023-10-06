@@ -1,12 +1,6 @@
+import { Foo } from "./common";
+import type { ParsedPath } from "path";
+
 export class Face {
-  a:
-    | string
-    | {
-        foo: Foo;
-      };
+  a: Map<ParsedPath, Foo>;
 }
-
-interface Foo {
-  foo: string;
-}
-

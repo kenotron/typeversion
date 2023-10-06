@@ -12,7 +12,8 @@
       "runtimeArgs": ["-r", "@swc-node/register"],
       "args": ["--root", "examples", "source.ts", "target.ts"],
       "program": "src/cli.ts",
-      "outFiles": ["${workspaceFolder}/lib/**/*.js"]
+      "outFiles": ["${workspaceFolder}/lib/**/*.js"],
+      "sourceMaps": true
     }
   ]
 }

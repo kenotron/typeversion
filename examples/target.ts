@@ -1,12 +1,3 @@
 export class Face {
-  a:
-    | string
-    | {
-        foo: Foo;
-      };
+  a: Map<string, string[]>;
 }
-
-interface Foo {
-  foo: string;
-}
-
