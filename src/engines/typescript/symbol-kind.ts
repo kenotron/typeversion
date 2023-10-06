@@ -34,3 +34,7 @@ export function isFunction(symbol: ts.Symbol) {
 export function isTypeAlias(symbol: ts.Symbol) {
   return !!(symbol.getFlags() & ts.SymbolFlags.TypeAlias);
 }
+
+export function isTypeLiteral(symbol: ts.Symbol) {
+  return !!(symbol.getFlags() & ts.SymbolFlags.TypeLiteral);
+}
