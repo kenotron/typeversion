@@ -4,6 +4,11 @@ export function getTypeOfExport(
   exportSymbol: ts.Symbol,
   checker: ts.TypeChecker
 ) {
+  // Handle aliases
+  if (exportSymbol.getFlags() & ts.SymbolFlags.Alias) {
+    return getTypeOfExport(checker.getAliasedSymbol(exportSymbol), checker);
+  }
+
   // Find the declaration from baseExport that is a type
   let typeDeclaration: ts.Declaration;
   for (const declaration of exportSymbol.declarations) {
@@ -15,6 +20,8 @@ export function getTypeOfExport(
     ) {
       typeDeclaration = declaration;
     }
+
+    typeDeclaration = declaration;
   }
 
   if (typeDeclaration) {

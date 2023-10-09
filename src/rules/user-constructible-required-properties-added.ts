@@ -31,13 +31,14 @@ const rule: Rule = {
     );
 
     for (const [name, baseExport] of baseSymbolMap) {
-      if (isUserConstructible(baseExport)) {
+      const baseExportType = getTypeOfExport(baseExport, base.checker);
+      if (isUserConstructible(baseExportType)) {
         const targetExport = targetSymbolMap.get(name);
         if (!targetExport) {
           continue;
         }
 
-        const baseExportType = getTypeOfExport(baseExport, base.checker);
+        
         const targetExportType = getTypeOfExport(targetExport, target.checker);
 
         if (!baseExportType || !targetExportType) {
