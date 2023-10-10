@@ -2,11 +2,12 @@ import ts from "typescript";
 import { TypeInformer } from "../engines/typescript/type-informer";
 import { Rule, RuleResult } from "../types";
 import { collectProperties } from "../engines/typescript/collect-properties-of-object-type";
+import { isWidened } from "../engines/typescript/is-widened";
 
 const rule: Rule = {
   name: "user-constructible-required-properties-added",
   description:
-    "User constructible types (interface, type alias) that have new required properties added",
+    "Non-user constructible types (interface, type alias) that have widened readonly properties",
   async check(context) {
     const {
       typescript: { base, target },
@@ -48,16 +49,24 @@ const rule: Rule = {
           // check if the property is readonly
           if (
             ts.isPropertyDeclaration(baseProp.symbol.valueDeclaration) &&
-            ts.getModifiers(baseProp.symbol.valueDeclaration)
+            ts.getCombinedModifierFlags(baseProp.symbol.valueDeclaration) &
+              ts.ModifierFlags.Readonly
           ) {
             // check if the property is widened
             if (baseProp.type && targetProp.type) {
-              if (isWidened(baseProp.type, targetProp.type)) {
+              if (
+                isWidened(
+                  baseProp.type,
+                  baseInformer,
+                  targetProp.type,
+                  targetInformer
+                )
+              ) {
                 results.minChangeType = "major";
                 results.messages.push(
-                  `The readonly property \`${propName}\` of \`${name}\` has been widened from \`${base.checker.typeToString(
+                  `The readonly property "${propName}" of non-user-constructible type "${name}" has been widened from "${base.checker.typeToString(
                     baseProp.type
-                  )}\` to \`${target.checker.typeToString(targetProp.type)}\`.`
+                  )}" to "${target.checker.typeToString(targetProp.type)}".`
                 );
               }
             }
@@ -69,33 +78,5 @@ const rule: Rule = {
     return results;
   },
 };
-
-function isWidened(base: ts.Type, target: ts.Type) {
-  // cannot widen from any
-  if (base.flags & ts.TypeFlags.Any) {
-    return false;
-  }
-
-  // if target is now an any or unknown but the base is not
-  if (
-    target.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown) &&
-    !(base.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown))
-  ) {
-    return true;
-  }
-
-  // if a type went from a non-union to a union
-  if (target.flags & ts.TypeFlags.Union && !(base.flags & ts.TypeFlags.Union)) {
-    return true;
-  }
-
-  // if the base is a union type, check if the target is a superset of the base
-  if (base.flags & ts.TypeFlags.Union) {
-    const unionBase = base as ts.UnionType;
-
-    // check if target has more types than base
-    return unionBase.types.every((t) => isWidened(t, target));
-  }
-}
 
 export default rule;

@@ -1,0 +1,167 @@
+import ts from "typescript";
+import { TypeInformer } from "../engines/typescript/type-informer";
+import { Rule, RuleResult } from "../types";
+import { collectProperties } from "../engines/typescript/collect-properties-of-object-type";
+import { isNarrowed } from "../engines/typescript/is-narrowed";
+
+const rule: Rule = {
+  name: "function-params-and-return-type-changed",
+  description:
+    "Function params and return type that have changed in the types or have been removed",
+  async check(context) {
+    const {
+      typescript: { base, target },
+    } = context;
+
+    const results: RuleResult = {
+      minChangeType: "none",
+      messages: [],
+    };
+
+    const baseInformer = new TypeInformer(base.checker);
+    const targetInformer = new TypeInformer(target.checker);
+
+    const baseSymbolMap = new Map(base.exports.map((e) => [e.escapedName, e]));
+    const targetSymbolMap = new Map(
+      target.exports.map((e) => [e.escapedName, e])
+    );
+
+    for (const [name, baseExport] of baseSymbolMap) {
+      const baseExportType = baseInformer.getTypeOfExport(baseExport);
+      const targetExport = targetSymbolMap.get(name);
+      if (!targetExport) {
+        continue;
+      }
+
+      const targetExportType = targetInformer.getTypeOfExport(targetExport);
+
+      const messages = checkBreakingFunctionType(
+        baseInformer,
+        targetInformer,
+        baseExportType,
+        targetExportType
+      );
+
+      if (messages.length > 0) {
+        results.minChangeType = "major";
+        results.messages.push(
+          ...messages.map((m) => `Function "${name}": ${m}`)
+        );
+      }
+    }
+
+    return results;
+  },
+};
+
+function checkBreakingFunctionType(
+  baseInformer: TypeInformer,
+  targetInformer: TypeInformer,
+  base: ts.Type,
+  target: ts.Type
+): string[] {
+  const messages: string[] = [];
+
+  if (baseInformer.isFunction(base)) {
+    const baseSignatures = base.getCallSignatures();
+    const targetSignatures = target.getCallSignatures();
+
+    // Compare the last signature of each signature list (the most specific)
+    const lastBaseSignature = baseSignatures[baseSignatures.length - 1];
+    const lastTargetSignature = targetSignatures[targetSignatures.length - 1];
+
+    const baseParams = lastBaseSignature.getParameters();
+    const targetParams = lastTargetSignature.getParameters();
+
+    const baseReturnType = lastBaseSignature.getReturnType();
+    const targetReturnType = lastTargetSignature.getReturnType();
+
+    // check to see if argument types or return types have changed, or if args are narrowed
+    for (let i = 0; i < baseParams.length; i++) {
+      const baseParam = baseParams[i];
+      const baseParamType = baseInformer.getTypeOfExport(baseParam);
+
+      const targetParam = targetParams[i];
+      const targetParamType = targetInformer.getTypeOfExport(targetParam);
+
+      if (
+        isNarrowed(baseParamType, baseInformer, targetParamType, targetInformer)
+      ) {
+        messages.push(
+          `parameter "${
+            baseParam.escapedName
+          }" of type "${baseInformer.checker.typeToString(
+            baseInformer.getTypeOfExport(baseParam)
+          )}" has been changed to "${targetInformer.checker.typeToString(
+            baseInformer.getTypeOfExport(targetParam)
+          )}"`
+        );
+        continue;
+      }
+
+      // if (!checkTypeFlags(baseParamType.flags, targetParamType.flags)) {
+      //   messages.push(
+      //     `parameter "${
+      //       baseParam.escapedName
+      //     }" of type "${baseInformer.checker.typeToString(
+      //       baseInformer.getTypeOfExport(baseParam)
+      //     )}" has been changed to "${targetInformer.checker.typeToString(
+      //       baseInformer.getTypeOfExport(targetParam)
+      //     )}"`
+      //   );
+      //   continue;
+      // }
+    }
+
+    if (!checkTypeFlags(baseReturnType.flags, targetReturnType.flags)) {
+      messages.push(
+        `"${baseInformer.checker.typeToString(
+          baseReturnType
+        )}" has been changed to "${targetInformer.checker.typeToString(
+          targetReturnType
+        )}"`
+      );
+    }
+
+    // 2. check to see if the args have now required a more narrow type
+
+    // 3. check to see if return type has been widened
+    // 4. check to see if function has newly required arguments
+    // 5. check to see if function removed an existing argument
+  }
+
+  return messages;
+}
+
+function checkTypeFlags(baseFlags: ts.TypeFlags, targetFlags: ts.TypeFlags) {
+  const flags = [
+    ts.TypeFlags.Any,
+    ts.TypeFlags.Unknown,
+    ts.TypeFlags.StringLike,
+    ts.TypeFlags.BigIntLike,
+    ts.TypeFlags.NumberLike,
+    ts.TypeFlags.BooleanLike,
+    ts.TypeFlags.EnumLike,
+    ts.TypeFlags.BigIntLike,
+    ts.TypeFlags.StringLiteral,
+    ts.TypeFlags.NumberLiteral,
+    ts.TypeFlags.BooleanLiteral,
+    ts.TypeFlags.EnumLiteral,
+    ts.TypeFlags.BigIntLiteral,
+    ts.TypeFlags.ESSymbol,
+    ts.TypeFlags.UniqueESSymbol,
+    ts.TypeFlags.Void,
+    ts.TypeFlags.Undefined,
+    ts.TypeFlags.Null,
+    ts.TypeFlags.Never,
+  ];
+
+  const baseFlagsResult =
+    baseFlags & flags.reduce((acc, flag) => acc | flag, 0);
+  const targetFlagsResult =
+    targetFlags & flags.reduce((acc, flag) => acc | flag, 0);
+
+  return baseFlagsResult === targetFlagsResult;
+}
+
+export default rule;

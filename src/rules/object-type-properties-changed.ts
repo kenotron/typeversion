@@ -55,6 +55,14 @@ const rule: Rule = {
             continue;
           }
 
+          if (
+            ts.isPropertyDeclaration(baseProp.symbol.valueDeclaration) &&
+            ts.getCombinedModifierFlags(baseProp.symbol.valueDeclaration) &
+              ts.ModifierFlags.Readonly
+          ) {
+            continue;
+          }
+
           const result = comparePropertyTypes(
             propName,
             {

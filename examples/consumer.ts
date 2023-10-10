@@ -1,7 +1,3 @@
-import {Person, buildPerson} from './target';
+import { F } from "./source";
 
-const person = buildPerson('Alice');
-
-function sayHello(person: Person) {
-  console.log(`Hello, ${person.widenMe.length}!`);
-}
+console.log(F());

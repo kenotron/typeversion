@@ -73,8 +73,6 @@ export class TypeInformer {
       return false;
     }
 
-    console.log(this.checker.typeToString(type), this.isObjectType(type));
-
     const symbol = this.getSymbol(type);
 
     let hasConstructorSignature = false;
@@ -122,5 +120,22 @@ export class TypeInformer {
     if (typeDeclaration) {
       return this.checker.getTypeAtLocation(typeDeclaration);
     }
+  }
+
+  collectProperties(type: ts.Type) {
+    const properties: Record<string, { type: ts.Type; symbol: ts.Symbol }> = {};
+    type
+      .getProperties()
+      .sort((a, b) => (a.escapedName > b.escapedName ? 1 : -1))
+      .forEach((property) => {
+        if (isPropertyPrivate(property)) {
+          return;
+        }
+  
+        const propertyType = this.checker.getTypeOfSymbol(property);
+        properties[property.name] = { type: propertyType, symbol: property };
+      });
+  
+    return properties;
   }
 }
