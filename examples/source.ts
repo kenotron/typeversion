@@ -9,9 +9,11 @@ class Person {
   //     not be emitted by TypeScript or Babel.
   // 3.  Because the class itself is declared but not exported, the only way
   //     to construct it is using the function exported lower in the module.
-  declare private __brand: void;
+  private declare __brand: void;
 
   name: string;
+
+  widenMe: string;
 
   constructor(name: string) {
     this.name = name;
@@ -27,6 +29,13 @@ export type { Person };
 // This is the controlled way of building a person: users can only get a
 // `Person` by calling this function, even though they can *name* the type
 // by doing `import type { Person} from '...';`.
-export function buildPerson(name: string, age: number): Person {
+export function buildPerson(name: string): Person {
   return new Person(name);
 }
+
+class F {
+  a: string;
+  b: string;
+}
+
+export { F };

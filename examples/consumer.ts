@@ -1,5 +1,7 @@
-import type { Person } from "./source";
+import {Person, buildPerson} from './target';
 
-const a: Person = {
-  name: "Alice"
+const person = buildPerson('Alice');
+
+function sayHello(person: Person) {
+  console.log(`Hello, ${person.widenMe.length}!`);
 }

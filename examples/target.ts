@@ -10,11 +10,12 @@ class Person {
   declare private __brand: void;
 
   name: string;
-  age: number;
 
-  constructor(name: string, age: number) {
+  widenMe: string | { hello: string};
+
+  constructor(name: string) {
     this.name = name;
-    this.age = age;
+  
   }
 }
 
@@ -27,6 +28,8 @@ export type { Person };
 // This is the controlled way of building a person: users can only get a
 // `Person` by calling this function, even though they can *name* the type
 // by doing `import type { Person} from '...';`.
-export function buildPerson(name: string, age: number): Person {
-  return new Person(name, age);
+export function buildPerson(name: string): Person {
+  return new Person(name);
 }
+
+export type F = { a: string; b: string };
