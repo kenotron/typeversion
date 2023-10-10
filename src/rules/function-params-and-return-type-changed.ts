@@ -76,58 +76,78 @@ function checkBreakingFunctionType(
     const baseReturnType = lastBaseSignature.getReturnType();
     const targetReturnType = lastTargetSignature.getReturnType();
 
-    // check to see if argument types or return types have changed, or if args are narrowed
+    // Check on the parameters: if the types are narrowed, completely changed, or newly added required params
     for (let i = 0; i < baseParams.length; i++) {
       const baseParam = baseParams[i];
       const baseParamType = baseInformer.getTypeOfExport(baseParam);
 
-      const targetParam = targetParams[i];
-      const targetParamType = targetInformer.getTypeOfExport(targetParam);
+      if (targetParams.length > i) {
+        const targetParam = targetParams[i];
+        const targetParamType = targetInformer.getTypeOfExport(targetParam);
 
-      if (
-        isNarrowed(baseParamType, baseInformer, targetParamType, targetInformer)
-      ) {
+        if (
+          isNarrowed(
+            baseParamType,
+            baseInformer,
+            targetParamType,
+            targetInformer
+          )
+        ) {
+          messages.push(
+            `parameter "${
+              baseParam.escapedName
+            }" of type "${baseInformer.checker.typeToString(
+              baseInformer.getTypeOfExport(baseParam)
+            )}" has been changed to "${targetInformer.checker.typeToString(
+              baseInformer.getTypeOfExport(targetParam)
+            )}"`
+          );
+          continue;
+        }
+
+        if (!checkTypeFlags(baseParamType.flags, targetParamType.flags)) {
+          messages.push(
+            `parameter "${
+              baseParam.escapedName
+            }" of type "${baseInformer.checker.typeToString(
+              baseInformer.getTypeOfExport(baseParam)
+            )}" has been changed to "${targetInformer.checker.typeToString(
+              baseInformer.getTypeOfExport(targetParam)
+            )}"`
+          );
+          continue;
+        }
+      } else {
         messages.push(
-          `parameter "${
-            baseParam.escapedName
-          }" of type "${baseInformer.checker.typeToString(
-            baseInformer.getTypeOfExport(baseParam)
-          )}" has been changed to "${targetInformer.checker.typeToString(
-            baseInformer.getTypeOfExport(targetParam)
-          )}"`
+          `parameter count went down from ${baseParams.length} to ${targetParams.length}`
         );
-        continue;
       }
+    }
 
-      // if (!checkTypeFlags(baseParamType.flags, targetParamType.flags)) {
-      //   messages.push(
-      //     `parameter "${
-      //       baseParam.escapedName
-      //     }" of type "${baseInformer.checker.typeToString(
-      //       baseInformer.getTypeOfExport(baseParam)
-      //     )}" has been changed to "${targetInformer.checker.typeToString(
-      //       baseInformer.getTypeOfExport(targetParam)
-      //     )}"`
-      //   );
-      //   continue;
-      // }
+    // checks to see if there are newly added required targetParams
+    if (targetParams.length > baseParams.length) {
+      const newParams = targetParams.slice(baseParams.length);
+      for (const param of newParams) {
+        if (
+          ts.isParameter(param.valueDeclaration) &&
+          !targetInformer.checker.isOptionalParameter(param.valueDeclaration)
+        ) {
+          messages.push(
+            `parameter "${param.escapedName}" has been added as required`
+          );
+        }
+      }
     }
 
     if (!checkTypeFlags(baseReturnType.flags, targetReturnType.flags)) {
       messages.push(
-        `"${baseInformer.checker.typeToString(
+        `return type "${baseInformer.checker.typeToString(
           baseReturnType
         )}" has been changed to "${targetInformer.checker.typeToString(
           targetReturnType
         )}"`
       );
     }
-
-    // 2. check to see if the args have now required a more narrow type
-
-    // 3. check to see if return type has been widened
-    // 4. check to see if function has newly required arguments
-    // 5. check to see if function removed an existing argument
   }
 
   return messages;

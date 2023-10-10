@@ -24,10 +24,7 @@ export function isNarrowed(
   }
 
   // if a type went from a union to a non-union type, and one of the types is represented
-  if (
-    !(target.flags & ts.TypeFlags.Union) &&
-    base.flags & ts.TypeFlags.Union
-  ) {
+  if (!(target.flags & ts.TypeFlags.Union) && base.flags & ts.TypeFlags.Union) {
     return true;
   }
 
@@ -76,7 +73,6 @@ export function isNarrowed(
 
     for (const name of basePropertyNames) {
       if (!targetPropertyNames.has(name)) {
-        
         return true;
       }
 

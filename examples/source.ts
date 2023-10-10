@@ -1,3 +1,6 @@
-export function F(a: string | string[], b: { foo: string } & { bar: string; baz: string }): string {
+export function F(
+  a: string | string[],
+  b: { foo: string } & { bar: string }
+): string {
   return "hello";
 }
