@@ -6,14 +6,19 @@ import fs from "fs";
 import path from "path";
 
 export async function compare(options: {
-  root: string;
-  base: string;
-  target: string;
+  base: {
+    fileName: string;
+    source: string;
+  };
+  target: {
+    fileName: string;
+    source: string;
+  };
 }) {
-  const { base, target, root } = options;
+  const { base, target } = options;
 
   // TODO: 2.0 should include a way to add engines (e.g. GraphQL)
-  const context = initializeContext({ root, base, target });
+  const context = initializeContext({ base, target });
 
   const results: RuleResult[] = [];
   const rules = await getRules();
@@ -38,17 +43,26 @@ async function getRules() {
 }
 
 function mergeResults(results: RuleResult[]) {
-  return results.reduce((acc, curr) => {
-    if (curr.minChangeType === "major") {
-      acc.minChangeType = "major";
-    } else if (curr.minChangeType === "minor" && acc.minChangeType !== "major") {
-      acc.minChangeType = "minor";
-    } else if (curr.minChangeType === "patch" && acc.minChangeType === "none") {
-      acc.minChangeType = "patch";
-    }
+  return results.reduce(
+    (acc, curr) => {
+      if (curr.minChangeType === "major") {
+        acc.minChangeType = "major";
+      } else if (
+        curr.minChangeType === "minor" &&
+        acc.minChangeType !== "major"
+      ) {
+        acc.minChangeType = "minor";
+      } else if (
+        curr.minChangeType === "patch" &&
+        acc.minChangeType === "none"
+      ) {
+        acc.minChangeType = "patch";
+      }
 
-    acc.messages = [...acc.messages, ...curr.messages];
+      acc.messages = [...acc.messages, ...curr.messages];
 
-    return acc;
-  }, { minChangeType: "none", messages: [] } as RuleResult);
+      return acc;
+    },
+    { minChangeType: "none", messages: [] } as RuleResult
+  );
 }

@@ -1,23 +1,27 @@
 import { getExportInfo } from "./get-export-info";
 
 export function initializeContext(options: {
-  root: string;
-  base: string;
-  target: string;
+  base: {
+    fileName: string;
+    source: string;
+  };
+  target: {
+    fileName: string;
+    source: string;
+  };
 }) {
-  const { root, base, target } = options;
-  const baseInfo = getExportInfo(root, base);
-  const targetInfo = getExportInfo(root, target);
+  const { base, target } = options;
+  const baseInfo = getExportInfo(base);
+  const targetInfo = getExportInfo(target);
 
   return {
-    root: options.root,
     typescript: {
       base: {
-        source: base,
+        source: base.source,
         ...baseInfo,
       },
       target: {
-        source: target,
+        source: target.source,
         ...targetInfo,
       },
     },

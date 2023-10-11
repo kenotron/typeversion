@@ -1,32 +1,44 @@
 import path from "path";
-import fs from "fs";
 import ts from "typescript";
 
-export function getExportInfo(root: string, src: string) {
-  const jsonOptions = ts.parseConfigFileTextToJson(
-    ts.sys.resolvePath(path.join(root, "tsconfig.json")),
-    fs.readFileSync(path.join(root, "tsconfig.json"), "utf8")
+export function getExportInfo(source: { fileName: string; source: string }) {
+  const fullFileName = path.resolve(source.fileName).replace(/\\/g, '/');
+
+  const options = ts.getDefaultCompilerOptions();
+  options.target = ts.ScriptTarget.ESNext;
+  options.module = ts.ModuleKind.CommonJS;
+  options.moduleResolution = ts.ModuleResolutionKind.NodeJs;
+  options.esModuleInterop = true;
+  options.allowSyntheticDefaultImports = true;
+  options.isolatedModules = true;
+
+  const sourceFile = ts.createSourceFile(
+    fullFileName,
+    source.source,
+    ts.ScriptTarget.ESNext
   );
 
-  // force the use of "root" as the current directory
-  ts.sys.getCurrentDirectory = () => root;
+  const host = ts.createCompilerHost(options);
+  const _getSourceFile = host.getSourceFile;
+  host.getSourceFile = function (fileName, languageVersion, onError) {
+    if (fileName === fullFileName) {
+      return sourceFile;
+    }
+    return _getSourceFile(fileName, languageVersion, onError);
+  }.bind(host);
+  host.getCurrentDirectory = () => path.dirname(fullFileName);
 
-  const cmdLine = ts.parseJsonConfigFileContent(
-    jsonOptions.config,
-    ts.sys,
-    root
-  );
-  const program = ts.createProgram([path.join(root, src)], cmdLine.options);
+  const program = ts.createProgram({
+    options,
+    rootNames: [fullFileName],
+    host,
+  });
+
+  // const program = ts.createProgram([path.join(root, src)], cmdLine.options);
   const checker = program.getTypeChecker();
 
-  let sourceFile = program.getSourceFile(src);
-
-  if (!sourceFile) {
-    throw new Error("No source file found for " + src);
-  }
-
-  let sourceFileSymbol = checker.getSymbolAtLocation(sourceFile);
-  let srcExports = checker.getExportsOfModule(sourceFileSymbol);
+  const sourceFileSymbol = checker.getSymbolAtLocation(sourceFile);
+  const srcExports = checker.getExportsOfModule(sourceFileSymbol);
 
   return { exports: srcExports, checker, program };
 }

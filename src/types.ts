@@ -4,7 +4,6 @@ export interface Rule {
   name: string;
   description: string;
   check: RuleChecker;
-
 }
 
 export interface RuleChecker {
@@ -12,8 +11,6 @@ export interface RuleChecker {
 }
 
 export interface RuleContext {
-  root: string;
-
   typescript: {
     base: {
       source: string;
