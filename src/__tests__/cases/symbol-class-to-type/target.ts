@@ -1,3 +1,5 @@
-export interface Foo {
+class Foo {
   a: string;
 }
+
+export type { Foo };

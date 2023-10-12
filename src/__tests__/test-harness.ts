@@ -32,3 +32,7 @@ export function testHarness(testCase: string) {
     expect(results).toMatchObject(expected);
   });
 }
+
+export function extractTestCaseName(fileName: string) {
+  return path.basename(fileName).replace(/\.test\.ts$/, "");
+}

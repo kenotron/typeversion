@@ -1,2 +1,2 @@
-import { testHarness } from "../../test-harness";
-testHarness("constants-no-change");
+import { extractTestCaseName, testHarness } from "../../test-harness";
+testHarness(extractTestCaseName(__filename));

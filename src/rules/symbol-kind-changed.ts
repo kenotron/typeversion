@@ -93,13 +93,13 @@ const rule: Rule = {
       }
 
       if (
-        baseInformer.isClass(baseExportType) &&
-        !targetInformer.isValueType(targetExportType) &&
-        targetInformer.isCheckedType(targetExportType)
+        (baseInformer.isClass(baseExportType) && !targetInformer.isClass(targetExportType)) ||
+        (baseInformer.isInterface(baseExportType) && !targetInformer.isInterface(targetExportType)) ||
+        (baseInformer.isFunction(baseExportType) && !targetInformer.isFunction(targetExportType))
       ) {
         results.minChangeType = "major";
         results.messages.push(
-          `Export "${name}" symbol from a class to type-only`
+          `Export "${name}" symbol has changed from a class to a non-class, interface to a non-interface, or function to a non-function`
         );
         continue;
       }
