@@ -28,59 +28,26 @@ const rule: Rule = {
 
     for (const [name, baseExport] of baseSymbolMap) {
       const baseExportType = baseInformer.getTypeOfExport(baseExport);
-      if (baseInformer.isObjectType(baseExportType)) {
+      if (!baseInformer.isObjectType(baseExportType)) {
         const targetExport = targetSymbolMap.get(name);
         if (!targetExport) {
           continue;
         }
 
-        const baseExportType = baseInformer.getTypeOfExport(baseExport);
         const targetExportType = targetInformer.getTypeOfExport(targetExport);
 
-        if (!baseExportType || !targetExportType) {
-          throw new Error(`unable to determine type of the export: ${name}`);
-        }
-
-        const baseProps = collectProperties(baseExportType, base.checker);
-        const targetProps = collectProperties(targetExportType, target.checker);
-
-        // Check for changes in property types
-        for (const [propName, baseProp] of Object.entries(baseProps)) {
-          const targetProp = targetProps[propName];
-          if (!targetProp) {
-            results.minChangeType = "major";
-            results.messages.push(
-              `Property "${propName}" has been removed from "${name}`
-            );
-            continue;
-          }
-
-          if (
-            ts.isPropertyDeclaration(baseProp.symbol.valueDeclaration) &&
-            ts.getCombinedModifierFlags(baseProp.symbol.valueDeclaration) &
-              ts.ModifierFlags.Readonly
-          ) {
-            continue;
-          }
-
-          const result = comparePropertyTypes(
-            propName,
-            {
-              type: baseProp.type,
-              checker: base.checker,
-              program: base.program,
-            },
-            {
-              type: targetProp.type,
-              checker: target.checker,
-              program: target.program,
-            }
+        const baseTypeString = getResolvedType(baseExportType, base.checker, base.program);
+        const targetTypeString = getResolvedType(
+          targetExportType,
+          target.checker,
+          target.program
+        );
+      
+        if (baseTypeString !== targetTypeString) {
+          results.minChangeType = "major";
+          results.messages.push(
+            `Export "${name}" symbol changed from ${baseTypeString} to ${targetTypeString}`
           );
-
-          if (result) {
-            results.minChangeType = "major";
-            results.messages.push(result.message);
-          }
         }
       }
     }
@@ -106,7 +73,7 @@ function comparePropertyTypes(
   if (baseTypeString !== targetTypeString) {
     return {
       minChangeType: "major",
-      message: `Property "${name}" has changed type from ${baseTypeString} to ${targetTypeString}`,
+      message: `Property "${name}" has changed type from "${baseTypeString}" to "${targetTypeString}"`,
     };
   }
 }

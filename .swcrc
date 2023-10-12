@@ -9,5 +9,13 @@
     "lazy": false,
     "noInterop": false
   },
-  "sourceMaps": true
+  "sourceMaps": true,
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": true,
+      "dynamicImport": true
+    }
+  }
 }

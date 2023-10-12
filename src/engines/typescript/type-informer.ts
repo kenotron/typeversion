@@ -10,56 +10,59 @@ export class TypeInformer {
 
     return type.symbol;
   }
+
   isValueType(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.Value);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Value);
   }
 
   isCheckedType(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.Value);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Value);
   }
 
   isClass(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.Class);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Class);
   }
 
   isInterface(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.Interface);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Interface);
   }
 
   isNamespace(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.Namespace);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Namespace);
   }
 
   isEnum(type: ts.Type) {
     const symbol = this.getSymbol(type);
     return (
-      !!(symbol.getFlags() & ts.SymbolFlags.Enum) ||
-      !!(symbol.getFlags() & ts.SymbolFlags.ConstEnum)
+      (symbol && !!(symbol.getFlags() & ts.SymbolFlags.Enum)) ||
+      (symbol && !!(symbol.getFlags() & ts.SymbolFlags.ConstEnum))
     );
   }
 
   isFunction(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.Function);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Function);
   }
 
   isTypeAlias(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.TypeAlias);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.TypeAlias);
   }
 
   isTypeLiteral(type: ts.Type) {
     const symbol = this.getSymbol(type);
-    return !!(symbol.getFlags() & ts.SymbolFlags.TypeLiteral);
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.TypeLiteral);
   }
 
   isObjectType(type: ts.Type) {
-    return this.isClass(type) || this.isInterface(type) || this.isTypeLiteral(type);
+    return (
+      this.isClass(type) || this.isInterface(type) || this.isTypeLiteral(type)
+    );
   }
 
   /**
@@ -131,11 +134,11 @@ export class TypeInformer {
         if (isPropertyPrivate(property)) {
           return;
         }
-  
+
         const propertyType = this.checker.getTypeOfSymbol(property);
         properties[property.name] = { type: propertyType, symbol: property };
       });
-  
+
     return properties;
   }
 }

@@ -28,7 +28,7 @@ const rule: Rule = {
 
     for (const [name, baseExport] of baseSymbolMap) {
       const baseExportType = baseInformer.getTypeOfExport(baseExport);
-      if (!baseInformer.isUserConstructible(baseExportType)) {
+      if (!baseInformer.isUserConstructible(baseExportType) && baseInformer.isObjectType(baseExportType)) {
         const targetExport = targetSymbolMap.get(name);
         if (!targetExport) {
           continue;
