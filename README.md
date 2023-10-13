@@ -2,9 +2,9 @@
 
 There is a prior art at https://semver-ts.org that describes a spec about when the output types have breaking changes. We can leverage this information to build up a set of rules with the help of the typechecker on a "before" and "after" basis.
 
-## Run the tool example like this (for now, in the repo):
+## Run the tool example like this:
 
-`yarn dev examples/source.ts examples/target.ts`
+`npx typeversion examples/source.ts examples/target.ts`
 
 Now go and change it around and see how it behaves!
 
