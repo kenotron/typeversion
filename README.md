@@ -1,5 +1,7 @@
 # Semver checker for TypeScript
 
+There is a prior art at https://semver-ts.org that describes a spec about when the output types have breaking changes. We can leverage this information to build up a set of rules with the help of the typechecker on a "before" and "after" basis.
+
 ## Run the tool example like this (for now, in the repo):
 
 `yarn dev examples/source.ts examples/target.ts`
