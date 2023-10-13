@@ -1,6 +1,4 @@
-export function F(
-  a: string | string[],
-  b: { foo: string } & { bar: string }
-): string {
-  return "hello";
+export interface F {
+	a: string;
+  b: string;
 }

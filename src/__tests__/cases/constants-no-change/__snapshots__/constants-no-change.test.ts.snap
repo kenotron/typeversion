@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test case "constants-no-change" 1`] = `
+{
+  "messages": [],
+  "minChangeType": "none",
+}
+`;

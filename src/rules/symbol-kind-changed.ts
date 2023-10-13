@@ -32,42 +32,32 @@ const rule: Rule = {
       const baseExportType = baseInformer.getTypeOfExport(baseExport);
       const targetExportType = targetInformer.getTypeOfExport(targetExport);
 
-      // value-only -> includes value
-      if (!baseInformer.isCheckedType(baseExportType)) {
-        if (targetInformer.isCheckedType(targetExportType)) {
-          results.minChangeType = "major";
-          results.messages.push(
-            `Export "${name}" symbol from a value-only also be a type checked symbol`
-          );
-          continue;
-        }
-      }
-
-      // type-only -> includes type
-      if (!baseInformer.isValueType(baseExportType)) {
-        if (targetInformer.isValueType(targetExportType)) {
-          results.minChangeType = "major";
-          results.messages.push(
-            `Export "${name}" symbol from a type-only also be a value symbol`
-          );
-          continue;
-        }
+      if (
+        baseInformer.isTypeSymbol(baseExport) !==
+        targetInformer.isTypeSymbol(targetExport)
+      ) {
+        results.minChangeType = "major";
+        results.messages.push(
+          `Export "${name}" symbol kind changed from a ${
+            baseInformer.isTypeSymbol(baseExport) ? "" : "non-"
+          }type symbol to a ${
+            baseInformer.isTypeSymbol(baseExport) ? "non-" : ""
+          }type symbol`
+        );
       }
 
       if (
-        baseInformer.isValueType(baseExportType) &&
-        baseInformer.isCheckedType(baseExportType)
+        baseInformer.isValueSymbol(baseExport) !==
+        targetInformer.isValueSymbol(targetExport)
       ) {
-        if (
-          !targetInformer.isValueType(targetExportType) ||
-          !targetInformer.isCheckedType(targetExportType)
-        ) {
-          results.minChangeType = "major";
-          results.messages.push(
-            `Export "${name}" symbol from a value & type kind to a non-value or non-type kind`
-          );
-          continue;
-        }
+        results.minChangeType = "major";
+        results.messages.push(
+          `Export "${name}" symbol kind changed from a ${
+            baseInformer.isValueSymbol(baseExport) ? "" : "non-"
+          }value symbol to a ${
+            baseInformer.isValueSymbol(baseExport) ? "non-" : ""
+          }value symbol`
+        );
       }
 
       if (
@@ -78,30 +68,22 @@ const rule: Rule = {
         results.messages.push(
           `Export "${name}" symbol from an interface to a type alias`
         );
-        continue;
       }
 
       if (
-        baseInformer.isNamespace(baseExportType) &&
-        !targetInformer.isNamespace(targetExportType)
+        baseInformer.isNamespace(baseExportType) !==
+          targetInformer.isNamespace(targetExportType) ||
+        baseInformer.isClass(baseExportType) !==
+          targetInformer.isClass(targetExportType) ||
+        baseInformer.isInterface(baseExportType) !==
+          targetInformer.isInterface(targetExportType) ||
+        baseInformer.isFunction(baseExportType) !==
+          targetInformer.isFunction(targetExportType)
       ) {
         results.minChangeType = "major";
         results.messages.push(
-          `Export "${name}" symbol from a namespace to a non-namespace`
+          `Export "${name}" symbol has changed (namespace, class, interface, or function).`
         );
-        continue;
-      }
-
-      if (
-        (baseInformer.isClass(baseExportType) && !targetInformer.isClass(targetExportType)) ||
-        (baseInformer.isInterface(baseExportType) && !targetInformer.isInterface(targetExportType)) ||
-        (baseInformer.isFunction(baseExportType) && !targetInformer.isFunction(targetExportType))
-      ) {
-        results.minChangeType = "major";
-        results.messages.push(
-          `Export "${name}" symbol has changed from a class to a non-class, interface to a non-interface, or function to a non-function`
-        );
-        continue;
       }
     }
 

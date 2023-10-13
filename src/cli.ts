@@ -19,7 +19,7 @@ const cliProgram = program
       target:
       {
         fileName: target,
-        source: fs.readFileSync(base, 'utf-8')
+        source: fs.readFileSync(target, 'utf-8')
       },
     });
 

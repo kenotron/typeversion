@@ -26,13 +26,10 @@ export function testHarness(testCase: string) {
       },
     });
 
-    const expected = (await import(path.join(testCasePath, "expected.ts")))
-      .default;
-
-    expect(results).toMatchObject(expected);
+    expect(results).toMatchSnapshot();
   });
 }
 
-export function extractTestCaseName(fileName: string) {
-  return path.basename(fileName).replace(/\.test\.ts$/, "");
+export function extractTestCaseName(dirname: string) {
+  return path.basename(dirname);
 }

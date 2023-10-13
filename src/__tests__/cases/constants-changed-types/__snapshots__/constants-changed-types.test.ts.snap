@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test case "constants-changed-types" 1`] = `
+{
+  "messages": [
+    "Export "a" symbol changed from 5 to "hello"",
+  ],
+  "minChangeType": "major",
+}
+`;

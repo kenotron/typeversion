@@ -5,6 +5,13 @@ import { initializeContext } from "./engines/typescript/init";
 import fs from "fs";
 import path from "path";
 
+const changeTypeSizes = {
+  none: 0,
+  patch: 1,
+  minor: 2,
+  major: 3,
+};
+
 export async function compare(options: {
   base: {
     fileName: string;
@@ -17,14 +24,13 @@ export async function compare(options: {
 }) {
   const { base, target } = options;
 
-  // TODO: 2.0 should include a way to add engines (e.g. GraphQL)
   const context = initializeContext({ base, target });
 
-  const results: RuleResult[] = [];
+  const results = new Map<string, RuleResult>();
   const rules = await getRules();
 
   for (const rule of rules) {
-    results.push(await rule.check(context));
+    results.set(rule.name, await rule.check(context));
   }
 
   return mergeResults(results);
@@ -42,27 +48,24 @@ async function getRules() {
   return rules;
 }
 
-function mergeResults(results: RuleResult[]) {
-  return results.reduce(
-    (acc, curr) => {
-      if (curr.minChangeType === "major") {
-        acc.minChangeType = "major";
-      } else if (
-        curr.minChangeType === "minor" &&
-        acc.minChangeType !== "major"
-      ) {
-        acc.minChangeType = "minor";
-      } else if (
-        curr.minChangeType === "patch" &&
-        acc.minChangeType === "none"
-      ) {
-        acc.minChangeType = "patch";
-      }
+function mergeResults(results: Map<string, RuleResult>) {
+  const merged: RuleResult = {
+    messages: [],
+    minChangeType: "none",
+  };
 
-      acc.messages = [...acc.messages, ...curr.messages];
+  for (const [name, result] of results) {
+    if (
+      changeTypeSizes[result.minChangeType] >
+      changeTypeSizes[merged.minChangeType]
+    ) {
+      merged.minChangeType = result.minChangeType;
+    }
 
-      return acc;
-    },
-    { minChangeType: "none", messages: [] } as RuleResult
-  );
+    for (const messages of result.messages) {
+      merged.messages.push(`[${name}] ${messages}`);
+    }
+  }
+  
+  return merged;
 }

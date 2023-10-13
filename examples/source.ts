@@ -1,1 +1,3 @@
-export const a = 5;
+export interface F {
+	a: string;
+}

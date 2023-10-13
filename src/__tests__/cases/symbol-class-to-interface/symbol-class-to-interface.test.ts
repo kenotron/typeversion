@@ -1,2 +1,2 @@
 import { extractTestCaseName, testHarness } from "../../test-harness";
-testHarness(extractTestCaseName(__filename));
+testHarness(extractTestCaseName(__dirname));

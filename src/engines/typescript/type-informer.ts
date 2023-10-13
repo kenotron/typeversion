@@ -3,41 +3,59 @@ import { isPropertyPrivate } from "./is-property-private";
 
 export class TypeInformer {
   constructor(public checker: ts.TypeChecker) {}
-  getSymbol(type: ts.Type) {
-    if (type.symbol && type.symbol.getFlags() & ts.SymbolFlags.Alias) {
-      return this.checker.getAliasedSymbol(type.symbol);
+  getSymbol(symbol: ts.Symbol) {
+    if (symbol && symbol.getFlags() & ts.SymbolFlags.Alias) {
+      return this.checker.getAliasedSymbol(symbol);
     }
 
-    return type.symbol;
+    return symbol;
   }
 
-  isValueType(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+  getSymbolForType(type: ts.Type) {
+    return this.getSymbol(type.getSymbol());
+  }
+
+  isValueSymbol(symbol: ts.Symbol) {
     return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Value);
   }
 
-  isCheckedType(type: ts.Type) {
-    const symbol = this.getSymbol(type);
-    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Value);
+  isTypeSymbol(symbol: ts.Symbol) {
+    if (
+      symbol.valueDeclaration &&
+      ts.isTypeOnlyImportOrExportDeclaration(symbol.valueDeclaration)
+    ) {
+      return true;
+    }
+
+    if (
+      symbol.declarations &&
+      symbol.declarations.every((declaration) =>
+        ts.isTypeOnlyImportOrExportDeclaration(declaration)
+      )
+    ) {
+      return true;
+    }
+
+    return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Type);
   }
 
   isClass(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
     return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Class);
   }
 
   isInterface(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
     return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Interface);
   }
 
   isNamespace(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
     return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Namespace);
   }
 
   isEnum(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
     return (
       (symbol && !!(symbol.getFlags() & ts.SymbolFlags.Enum)) ||
       (symbol && !!(symbol.getFlags() & ts.SymbolFlags.ConstEnum))
@@ -45,17 +63,17 @@ export class TypeInformer {
   }
 
   isFunction(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
     return symbol && !!(symbol.getFlags() & ts.SymbolFlags.Function);
   }
 
   isTypeAlias(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
     return symbol && !!(symbol.getFlags() & ts.SymbolFlags.TypeAlias);
   }
 
   isTypeLiteral(type: ts.Type) {
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
     return symbol && !!(symbol.getFlags() & ts.SymbolFlags.TypeLiteral);
   }
 
@@ -76,7 +94,7 @@ export class TypeInformer {
       return false;
     }
 
-    const symbol = this.getSymbol(type);
+    const symbol = this.getSymbolForType(type);
 
     let hasConstructorSignature = false;
     let hasPrivateProperty = false;
@@ -99,7 +117,7 @@ export class TypeInformer {
     return !hasConstructorSignature && !hasPrivateProperty;
   }
 
-  getTypeOfExport(exportSymbol: ts.Symbol) {
+  getTypeOfExport(exportSymbol: ts.Symbol): ts.Type | undefined {
     // Handle aliases
     if (exportSymbol.getFlags() & ts.SymbolFlags.Alias) {
       return this.getTypeOfExport(this.checker.getAliasedSymbol(exportSymbol));
@@ -123,6 +141,8 @@ export class TypeInformer {
     if (typeDeclaration) {
       return this.checker.getTypeAtLocation(typeDeclaration);
     }
+
+    return undefined;
   }
 
   collectProperties(type: ts.Type) {
