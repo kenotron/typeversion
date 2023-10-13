@@ -7,6 +7,9 @@
     "dev": "node -r @swc-node/register src/cli.ts",
     "test": "jest"
   },
+  "repository": {
+    "url": "https://github.com/kenotron/type-compare"
+  },
   "devDependencies": {
     "@swc/core": "1.3.82",
     "@types/node": "^18.0.0",
