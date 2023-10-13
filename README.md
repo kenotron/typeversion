@@ -6,7 +6,31 @@ There is a prior art at https://semver-ts.org that describes a spec about when t
 
 `npx typeversion examples/source.ts examples/target.ts`
 
-Now go and change it around and see how it behaves!
+### Example of adding a new required property in an interface
+
+```ts
+// filename: base.ts
+export interface F {
+	a: string;
+}
+```
+
+```ts
+// filename: target.ts
+export interface F {
+	a: string;
+  b: string;
+}
+```
+
+Now running the tool should give you a hint about what caused the breaking change
+
+```
+$ npx typeversion base.ts target.ts
+Recommended change type: major
+Reasons:
+  [user-constructible-required-properties-added] New required property "b" has been added to "F"
+```
 
 ## Experimental node.js API
 
