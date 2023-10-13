@@ -5,25 +5,32 @@ import fs from "fs";
 
 const cliProgram = program
   .command("compare <base> <target>", { isDefault: true })
+  .option('--json', 'output results as json', false)
   .description("compare two typescript files")
   .action(async (base, target, options, _command) => {
-    console.log(
-      `Comparing ${base} to ${target}`
-    );
-
     const results = await compare({
       base: {
         fileName: base,
-        source: fs.readFileSync(base, 'utf-8')
+        source: fs.readFileSync(base, "utf-8"),
       },
-      target:
-      {
+      target: {
         fileName: target,
-        source: fs.readFileSync(target, 'utf-8')
+        source: fs.readFileSync(target, "utf-8"),
       },
     });
 
-    console.log(results);
+    if (options.json) {
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
+
+    const summary = `
+Recommended change type: ${results.minChangeType}
+Reasons:
+  ${results.messages.join("\n  ")}
+`.trim();
+
+    console.log(summary);
   });
 
 cliProgram.parse(process.argv);
