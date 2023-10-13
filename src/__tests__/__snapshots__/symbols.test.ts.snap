@@ -1,5 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Test case "added-symbol" 1`] = `
+{
+  "messages": [],
+  "minChangeType": "none",
+}
+`;
+
+exports[`Test case "namespace-to-object-type" 1`] = `
+{
+  "messages": [
+    "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "removed-symbol" 1`] = `
+{
+  "messages": [
+    "[no-symbol-name-removed] Export "Bar" was removed from export class Foo {}
+",
+  ],
+  "minChangeType": "major",
+}
+`;
+
 exports[`Test case "symbol-add-export-type" 1`] = `
 {
   "messages": [
