@@ -4,5 +4,5 @@ module.exports = {
     "^.+\\.(t|j)sx?$": "@swc/jest",
   },
   rootDir: "./src/__tests__",
-  testMatch: ["<rootDir>/cases/**/*.test.ts"],
+  testMatch: ["<rootDir>/**/*.test.ts"],
 };

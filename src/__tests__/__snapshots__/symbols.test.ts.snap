@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test case "symbol-add-export-type" 1`] = `
+{
+  "messages": [
+    "[symbol-kind-changed] Export "F" symbol kind changed from a non-type symbol to a type symbol",
+    "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "symbol-add-export-value" 1`] = `
+{
+  "messages": [
+    "[symbol-kind-changed] Export "F" symbol kind changed from a non-value symbol to a value symbol",
+    "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "symbol-class-to-interface" 1`] = `
+{
+  "messages": [
+    "[symbol-kind-changed] Export "Foo" symbol kind changed from a value symbol to a non-value symbol",
+    "[symbol-kind-changed] Export "Foo" symbol has changed (namespace, class, interface, or function).",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "symbol-class-to-type" 1`] = `
+{
+  "messages": [
+    "[symbol-kind-changed] Export "Foo" symbol kind changed from a value symbol to a non-value symbol",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "symbol-class-to-value-only" 1`] = `
+{
+  "messages": [
+    "[symbol-kind-changed] Export "Foo" symbol kind changed from a type symbol to a non-type symbol",
+    "[user-constructible-required-properties-added] New required property "prototype" has been added to "Foo"",
+  ],
+  "minChangeType": "major",
+}
+`;

@@ -1,5 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Test case "constants-changed-types" 1`] = `
+{
+  "messages": [],
+  "minChangeType": "none",
+}
+`;
+
 exports[`Test case "constants-no-change" 1`] = `
 {
   "messages": [],
