@@ -5,20 +5,19 @@ import { Config as BackfillCacheOptions, CustomStorageConfig } from './backfill-
 
 export interface F {
 	a: string;
-	b: number;
+	b?: number;
 }
 
 
 type LageBackfillCacheOptions = Omit<BackfillCacheOptions, "cacheStorageConfig"> & {
 	cacheStorageConfig: Exclude<BackfillCacheOptions["cacheStorageConfig"], CustomStorageConfig>;
 };
-// export type CacheOptions = LageBackfillCacheOptions & {
-// 	environmentGlob: string[];
-// 	writeRemoteCache: boolean;
-// 	skipLocalCache: boolean;
-// };
+export type CacheOptions = LageBackfillCacheOptions & {
+	environmentGlob: string[];
+	writeRemoteCache: boolean;
+	skipLocalCache: boolean;
+};
 
-export class CacheOptions {}
 export interface Priority {
 	/** package name, as in package.json */
 	package?: string;

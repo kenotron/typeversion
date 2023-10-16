@@ -21,7 +21,7 @@ const rule: Rule = {
       if (!targetExport) {
         results.minChangeType = "major";
         results.messages.push(
-          `Export "${baseExport}" was removed from ${target.source}`
+          `Export "${baseExport}" was removed from the target`
         );
       }
     }

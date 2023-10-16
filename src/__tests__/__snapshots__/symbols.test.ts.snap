@@ -19,8 +19,7 @@ exports[`Test case "namespace-to-object-type" 1`] = `
 exports[`Test case "removed-symbol" 1`] = `
 {
   "messages": [
-    "[no-symbol-name-removed] Export "Bar" was removed from export class Foo {}
-",
+    "[no-symbol-name-removed] Export "Bar" was removed from the target",
   ],
   "minChangeType": "major",
 }
