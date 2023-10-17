@@ -1,7 +1,7 @@
 import { Rule, RuleResult } from "../types";
 
 const rule: Rule = {
-  name: "no-symbol-name-removed",
+  name: "symbol-name-removed",
   description: "Prevent removing exported symbols",
   async check(context) {
     const {

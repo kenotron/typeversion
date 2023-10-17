@@ -5,7 +5,7 @@ import { collectProperties } from "../engines/typescript/collect-properties-of-o
 import { isWidened } from "../engines/typescript/is-widened";
 
 const rule: Rule = {
-  name: "user-constructible-required-properties-added",
+  name: "non-user-contructible-readonly-props-widened",
   description:
     "Non-user constructible types (interface, type alias) that have widened readonly properties",
   async check(context) {

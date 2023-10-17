@@ -8,10 +8,10 @@ export interface F {
 	b?: number;
 }
 
-
 type LageBackfillCacheOptions = Omit<BackfillCacheOptions, "cacheStorageConfig"> & {
 	cacheStorageConfig: Exclude<BackfillCacheOptions["cacheStorageConfig"], CustomStorageConfig>;
 };
+
 export type CacheOptions = LageBackfillCacheOptions & {
 	environmentGlob: string[];
 	writeRemoteCache: boolean;

@@ -5,7 +5,7 @@ import { collectProperties } from "../engines/typescript/collect-properties-of-o
 import { TypeInformer } from "../engines/typescript/type-informer";
 
 const rule: Rule = {
-  name: "symbol-kind-changed",
+  name: "object-type-properties-changed",
   description:
     "Object type properties that have changed in the types or have been removed",
   async check(context) {

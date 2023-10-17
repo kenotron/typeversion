@@ -10,6 +10,7 @@ exports[`Test case "added-symbol" 1`] = `
 exports[`Test case "namespace-to-object-type" 1`] = `
 {
   "messages": [
+    "[literal-type-changed] Export "F" symbol changed from { a: 5, b: 5 } to { a: number, b: number }",
     "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
   ],
   "minChangeType": "major",
@@ -19,7 +20,7 @@ exports[`Test case "namespace-to-object-type" 1`] = `
 exports[`Test case "removed-symbol" 1`] = `
 {
   "messages": [
-    "[no-symbol-name-removed] Export "Bar" was removed from the target",
+    "[symbol-name-removed] Export "Bar" was removed from the target",
   ],
   "minChangeType": "major",
 }
@@ -28,6 +29,7 @@ exports[`Test case "removed-symbol" 1`] = `
 exports[`Test case "symbol-add-export-type" 1`] = `
 {
   "messages": [
+    "[literal-type-changed] Export "F" symbol changed from any to F",
     "[symbol-kind-changed] Export "F" symbol kind changed from a non-type symbol to a type symbol",
     "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
   ],
@@ -67,8 +69,18 @@ exports[`Test case "symbol-class-to-type" 1`] = `
 exports[`Test case "symbol-class-to-value-only" 1`] = `
 {
   "messages": [
+    "[object-type-properties-changed] Property "a" has been removed from "Foo",
     "[symbol-kind-changed] Export "Foo" symbol kind changed from a type symbol to a non-type symbol",
     "[user-constructible-required-properties-added] New required property "prototype" has been added to "Foo"",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "symbol-interface-to-type" 1`] = `
+{
+  "messages": [
+    "[symbol-kind-changed] Export "Foo" symbol has changed (namespace, class, interface, or function).",
   ],
   "minChangeType": "major",
 }

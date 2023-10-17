@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test case "non-readonly-prop-type-change" 1`] = `
+{
+  "messages": [
+    "[object-type-properties-changed] Property "b" has changed type from string to number",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "removed-prop" 1`] = `
+{
+  "messages": [
+    "[object-type-properties-changed] Property "b" has been removed from "IFace",
+    "[object-type-properties-changed] Property "b" has been removed from "IType",
+    "[object-type-properties-changed] Property "b" has been removed from "Classy",
+  ],
+  "minChangeType": "major",
+}
+`;
