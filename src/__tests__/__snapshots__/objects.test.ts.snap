@@ -4,6 +4,19 @@ exports[`Test case "non-readonly-prop-type-change" 1`] = `
 {
   "messages": [
     "[object-type-properties-changed] Property "b" has changed type from string to number",
+    "[object-type-properties-changed] Property "a" has changed type from string to string | number",
+    "[object-type-properties-changed] Property "a" has changed type from string to string | Array<string>",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "non-user-constructible-checks" 1`] = `
+{
+  "messages": [
+    "[non-user-contructible-readonly-props-widened] The readonly property "a" of non-user-constructible type "IWidened" has been widened from "string" to "string | string[]".",
+    "[non-user-contructible-readonly-props-widened] readonly "a" has been made optional in "INonUserConstructibleOptional"",
+    "[object-type-properties-changed] Property "a" has changed type from string to string | Array<string>",
   ],
   "minChangeType": "major",
 }
@@ -15,6 +28,15 @@ exports[`Test case "removed-prop" 1`] = `
     "[object-type-properties-changed] Property "b" has been removed from "IFace",
     "[object-type-properties-changed] Property "b" has been removed from "IType",
     "[object-type-properties-changed] Property "b" has been removed from "Classy",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "user-constructible-checks" 1`] = `
+{
+  "messages": [
+    "[user-constructible-required-properties-added] New required property "b" has been added to "IUserConstructible"",
   ],
   "minChangeType": "major",
 }

@@ -9,3 +9,13 @@ export interface IFaceNoChange {
   a: string;
   b: MyString;
 }
+
+export interface IWidened {
+  a: string | number;
+  b: string;
+}
+
+export class IClassWidened {
+  a: string | string[];
+  b: string;
+}

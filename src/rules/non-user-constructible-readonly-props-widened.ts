@@ -28,7 +28,10 @@ const rule: Rule = {
 
     for (const [name, baseExport] of baseSymbolMap) {
       const baseExportType = baseInformer.getTypeOfExport(baseExport);
-      if (!baseInformer.isUserConstructible(baseExportType) && baseInformer.isObjectType(baseExportType)) {
+      if (
+        !baseInformer.isUserConstructible(baseExportType) &&
+        baseInformer.isObjectType(baseExportType)
+      ) {
         const targetExport = targetSymbolMap.get(name);
         if (!targetExport) {
           continue;
@@ -48,9 +51,8 @@ const rule: Rule = {
           const baseProp = baseProps[propName];
           // check if the property is readonly
           if (
-            ts.isPropertyDeclaration(baseProp.symbol.valueDeclaration) &&
             ts.getCombinedModifierFlags(baseProp.symbol.valueDeclaration) &
-              ts.ModifierFlags.Readonly
+            ts.ModifierFlags.Readonly
           ) {
             // check if the property is widened
             if (baseProp.type && targetProp.type) {
@@ -69,6 +71,18 @@ const rule: Rule = {
                   )}" to "${target.checker.typeToString(targetProp.type)}".`
                 );
               }
+            }
+
+            // check if the property has changed from required to optional
+            if (
+              !(baseProp.symbol.getFlags() & ts.SymbolFlags.Optional) &&
+              targetProp.symbol.getFlags() & ts.SymbolFlags.Optional
+            ) {
+              results.minChangeType = "major";
+              results.messages.push(
+                `readonly "${propName}" has been made optional in "${name}"`
+              );
+              continue;
             }
           }
         }
