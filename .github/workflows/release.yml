@@ -3,7 +3,8 @@ name: Release
 on:
   workflow_dispatch:
   push:
-    branches: [master, v1]
+    branches: 
+      - main
     paths-ignore:
       - "docs/**"
 
