@@ -3,7 +3,7 @@
 exports[`Test case "args-changed" 1`] = `
 {
   "messages": [
-    "[function-params-and-return-type-changed] Function "acceptsValue": return type "void" has been changed to "void" 16384 16384",
+    "[function-params-and-return-type-changed] Function "acceptsValue": parameter "data" of type "number" has been changed to "{ count: number; }"",
   ],
   "minChangeType": "major",
 }
@@ -13,7 +13,15 @@ exports[`Test case "args-narrowed" 1`] = `
 {
   "messages": [
     "[function-params-and-return-type-changed] Function "acceptsValue": parameter "data" of type "string | number" has been changed to "number"",
-    "[function-params-and-return-type-changed] Function "acceptsValue": return type "void" has been changed to "void" 16384 16384",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "args-newly-required" 1`] = `
+{
+  "messages": [
+    "[function-params-and-return-type-changed] Function "myFunction": parameter "newlyRequired" has been added as required",
   ],
   "minChangeType": "major",
 }

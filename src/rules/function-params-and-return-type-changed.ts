@@ -103,10 +103,9 @@ function checkBreakingFunctionType(
               baseInformer.getTypeOfExport(targetParam)
             )}"`
           );
-          continue;
-        }
-
-        if (!checkTypeFlags(baseParamType.flags, targetParamType.flags)) {
+        } else if (
+          !checkTypeFlags(baseParamType.flags, targetParamType.flags)
+        ) {
           messages.push(
             `parameter "${
               baseParam.escapedName
@@ -116,7 +115,6 @@ function checkBreakingFunctionType(
               baseInformer.getTypeOfExport(targetParam)
             )}"`
           );
-          continue;
         }
       } else {
         messages.push(
@@ -140,16 +138,6 @@ function checkBreakingFunctionType(
       }
     }
 
-    if (!checkTypeFlags(baseReturnType.flags, targetReturnType.flags)) {
-      messages.push(
-        `return type "${baseInformer.checker.typeToString(
-          baseReturnType
-        )}" has been changed to "${targetInformer.checker.typeToString(
-          targetReturnType
-        )}" ${baseReturnType.flags} ${targetReturnType.flags}`
-      );
-    }
-
     // checks for widened return types
     if (
       isWidened(baseReturnType, baseInformer, targetReturnType, targetInformer)
@@ -158,6 +146,14 @@ function checkBreakingFunctionType(
         `return type "${baseInformer.checker.typeToString(
           baseReturnType
         )}" has been widened to "${targetInformer.checker.typeToString(
+          targetReturnType
+        )}"`
+      );
+    } else if (!checkTypeFlags(baseReturnType.flags, targetReturnType.flags)) {
+      messages.push(
+        `return type "${baseInformer.checker.typeToString(
+          baseReturnType
+        )}" has been changed to "${targetInformer.checker.typeToString(
           targetReturnType
         )}"`
       );
@@ -195,7 +191,7 @@ function checkTypeFlags(baseFlags: ts.TypeFlags, targetFlags: ts.TypeFlags) {
   const targetFlagsResult =
     targetFlags & flags.reduce((acc, flag) => acc | flag, 0);
 
-  return !(baseFlagsResult & targetFlagsResult);
+  return Boolean(baseFlagsResult) === Boolean(targetFlagsResult);
 }
 
 export default rule;
