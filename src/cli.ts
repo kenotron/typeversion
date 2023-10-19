@@ -26,9 +26,13 @@ const cliProgram = program
 
     const summary = `
 Recommended change type: ${results.minChangeType}
+${
+  results.messages.length > 0 &&
+  `
 Reasons:
   ${results.messages.join("\n  ")}
-`.trim();
+`.trim()
+}`;
 
     console.log(summary);
   });
