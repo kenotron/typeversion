@@ -1,3 +1,7 @@
-import { F } from "./source";
+import { getValue } from "./source";
 
-console.log(F());
+function handleValue(v: string) {
+  return getValue.length;
+}
+
+handleValue(getValue())

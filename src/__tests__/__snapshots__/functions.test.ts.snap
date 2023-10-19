@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test case "args-changed" 1`] = `
+{
+  "messages": [
+    "[function-params-and-return-type-changed] Function "acceptsValue": return type "void" has been changed to "void" 16384 16384",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "args-narrowed" 1`] = `
+{
+  "messages": [
+    "[function-params-and-return-type-changed] Function "acceptsValue": parameter "data" of type "string | number" has been changed to "number"",
+    "[function-params-and-return-type-changed] Function "acceptsValue": return type "void" has been changed to "void" 16384 16384",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "returns-widened" 1`] = `
+{
+  "messages": [
+    "[function-params-and-return-type-changed] Function "getValue": return type "string" has been widened to "string | null"",
+  ],
+  "minChangeType": "major",
+}
+`;

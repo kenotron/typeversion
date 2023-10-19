@@ -3,6 +3,7 @@ import { TypeInformer } from "../engines/typescript/type-informer";
 import { Rule, RuleResult } from "../types";
 import { collectProperties } from "../engines/typescript/collect-properties-of-object-type";
 import { isNarrowed } from "../engines/typescript/is-narrowed";
+import { isWidened } from "../engines/typescript/is-widened";
 
 const rule: Rule = {
   name: "function-params-and-return-type-changed",
@@ -145,6 +146,19 @@ function checkBreakingFunctionType(
           baseReturnType
         )}" has been changed to "${targetInformer.checker.typeToString(
           targetReturnType
+        )}" ${baseReturnType.flags} ${targetReturnType.flags}`
+      );
+    }
+
+    // checks for widened return types
+    if (
+      isWidened(baseReturnType, baseInformer, targetReturnType, targetInformer)
+    ) {
+      messages.push(
+        `return type "${baseInformer.checker.typeToString(
+          baseReturnType
+        )}" has been widened to "${targetInformer.checker.typeToString(
+          targetReturnType
         )}"`
       );
     }
@@ -181,7 +195,7 @@ function checkTypeFlags(baseFlags: ts.TypeFlags, targetFlags: ts.TypeFlags) {
   const targetFlagsResult =
     targetFlags & flags.reduce((acc, flag) => acc | flag, 0);
 
-  return baseFlagsResult === targetFlagsResult;
+  return !(baseFlagsResult & targetFlagsResult);
 }
 
 export default rule;

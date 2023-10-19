@@ -2,7 +2,7 @@ import path from "path";
 import ts from "typescript";
 
 export function getExportInfo(source: { fileName: string; source: string }) {
-  const fullFileName = path.resolve(source.fileName).replace(/\\/g, '/');
+  const fullFileName = path.resolve(source.fileName).replace(/\\/g, "/");
 
   const options = ts.getDefaultCompilerOptions();
   options.target = ts.ScriptTarget.ESNext;
@@ -11,6 +11,7 @@ export function getExportInfo(source: { fileName: string; source: string }) {
   options.esModuleInterop = true;
   options.allowSyntheticDefaultImports = true;
   options.isolatedModules = true;
+  options.strictNullChecks = true;
 
   const sourceFile = ts.createSourceFile(
     fullFileName,
@@ -39,6 +40,5 @@ export function getExportInfo(source: { fileName: string; source: string }) {
 
   const sourceFileSymbol = checker.getSymbolAtLocation(sourceFile);
   const srcExports = checker.getExportsOfModule(sourceFileSymbol);
-
   return { exports: srcExports, checker, program };
 }
