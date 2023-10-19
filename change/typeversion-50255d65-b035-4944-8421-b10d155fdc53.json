@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "adds a recommended change reason only if there are messages",
-  "packageName": "typeversion",
-  "email": "kchau@microsoft.com",
-  "dependentChangeType": "patch"
-}
