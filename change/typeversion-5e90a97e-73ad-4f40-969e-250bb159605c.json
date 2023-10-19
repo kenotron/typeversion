@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "fixes repo url",
-  "packageName": "typeversion",
-  "email": "kchau@microsoft.com",
-  "dependentChangeType": "patch"
-}
