@@ -1,7 +1,0 @@
-{
-    "exports": {
-        ".": {
-            "import": "./index.js"
-        }
-    }
-}
