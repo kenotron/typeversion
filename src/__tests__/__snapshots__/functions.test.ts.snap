@@ -27,6 +27,24 @@ exports[`Test case "args-newly-required" 1`] = `
 }
 `;
 
+exports[`Test case "args-removed" 1`] = `
+{
+  "messages": [
+    "[function-params-and-return-type-changed] Function "myFunction": parameter count went down from 2 to 1",
+  ],
+  "minChangeType": "major",
+}
+`;
+
+exports[`Test case "function-to-arrow-function" 1`] = `
+{
+  "messages": [
+    "[function-changed-to-arrow] Function "myFunction": changed from regular function to regular function",
+  ],
+  "minChangeType": "major",
+}
+`;
+
 exports[`Test case "returns-widened" 1`] = `
 {
   "messages": [

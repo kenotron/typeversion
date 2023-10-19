@@ -28,9 +28,18 @@ export async function compare(options: {
 
   const results = new Map<string, RuleResult>();
   const rules = await getRules();
+  const ruleNames = new Set<string>();
 
   for (const rule of rules) {
-    results.set(rule.name, await rule.check(context));
+    // This is to keep the rule names unique: it seems that the author of this tool keeps forgetting about changing the NAME of the rule :)
+    if (ruleNames.has(rule.name)) {
+      throw new Error(`Duplicate rule name: ${rule.name}`);
+    }
+
+    ruleNames.add(rule.name);
+
+    const result = await rule.check(context);
+    results.set(rule.name, result);
   }
 
   return mergeResults(results);
@@ -66,6 +75,6 @@ function mergeResults(results: Map<string, RuleResult>) {
       merged.messages.push(`[${name}] ${messages}`);
     }
   }
-  
+
   return merged;
 }
