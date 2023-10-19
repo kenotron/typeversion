@@ -1,12 +1,7 @@
 import ts from "typescript";
 import { TypeInformer } from "./type-informer";
 
-export function isWidened(
-  base: ts.Type,
-  baseInformer: TypeInformer,
-  target: ts.Type,
-  targetInformer: TypeInformer
-) {
+export function isWidened(base: ts.Type, baseInformer: TypeInformer, target: ts.Type, targetInformer: TypeInformer) {
   const baseChecker = baseInformer.checker;
   const targetChecker = targetInformer.checker;
 
@@ -16,18 +11,12 @@ export function isWidened(
   }
 
   // if target is now an any or unknown but the base is not
-  if (
-    target.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown) &&
-    !(base.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown))
-  ) {
+  if (target.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown) && !(base.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown))) {
     return true;
   }
 
   // if a type went from a non-union to a union
-  if (
-    target.flags & ts.TypeFlags.Union &&
-    !(base.flags & ts.TypeFlags.Union)
-  ) {
+  if (target.flags & ts.TypeFlags.Union && !(base.flags & ts.TypeFlags.Union)) {
     return true;
   }
 
@@ -37,12 +26,8 @@ export function isWidened(
     const unionTarget = target as ts.UnionType;
 
     // place both unionBase and unionTarget types into sets
-    const baseTypes = new Set(
-      unionBase.types.map((t) => baseChecker.typeToString(t))
-    );
-    const targetTypes = new Set(
-      unionTarget.types.map((t) => targetChecker.typeToString(t))
-    );
+    const baseTypes = new Set(unionBase.types.map((t) => baseChecker.typeToString(t)));
+    const targetTypes = new Set(unionTarget.types.map((t) => targetChecker.typeToString(t)));
 
     // check if target has more types than base
     const newTypes = [...targetTypes].filter((t) => !baseTypes.has(t));
@@ -51,16 +36,11 @@ export function isWidened(
     }
 
     // check if target has more types than base
-    return unionBase.types.every((t) =>
-      isWidened(t, baseInformer, target, targetInformer)
-    );
+    return unionBase.types.every((t) => isWidened(t, baseInformer, target, targetInformer));
   }
 
   // check if object types are widened
-  if (
-    base.flags & ts.TypeFlags.StructuredType &&
-    target.flags & ts.TypeFlags.StructuredType
-  ) {
+  if (base.flags & ts.TypeFlags.StructuredType && target.flags & ts.TypeFlags.StructuredType) {
     const baseObject = base as ts.StructuredType;
     const targetObject = target as ts.StructuredType;
 
@@ -76,14 +56,7 @@ export function isWidened(
         return true;
       }
 
-      if (
-        isWidened(
-          baseProperties[name].type,
-          baseInformer,
-          targetProperties[name].type,
-          targetInformer
-        )
-      ) {
+      if (isWidened(baseProperties[name].type, baseInformer, targetProperties[name].type, targetInformer)) {
         return true;
       }
     }

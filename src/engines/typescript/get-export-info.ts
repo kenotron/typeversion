@@ -13,11 +13,7 @@ export function getExportInfo(source: { fileName: string; source: string }) {
   options.isolatedModules = true;
   options.strictNullChecks = true;
 
-  const sourceFile = ts.createSourceFile(
-    fullFileName,
-    source.source,
-    ts.ScriptTarget.ESNext
-  );
+  const sourceFile = ts.createSourceFile(fullFileName, source.source, ts.ScriptTarget.ESNext);
 
   const host = ts.createCompilerHost(options);
   const _getSourceFile = host.getSourceFile;

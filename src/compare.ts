@@ -49,8 +49,7 @@ async function getRules() {
   const files = fs.readdirSync(path.join(__dirname, "rules"));
   const rules: Rule[] = [];
   for (const file of files) {
-    const rule = (await import(path.join(__dirname, "rules", file)))
-      .default as Rule;
+    const rule = (await import(path.join(__dirname, "rules", file))).default as Rule;
 
     rules.push(rule);
   }
@@ -64,10 +63,7 @@ function mergeResults(results: Map<string, RuleResult>) {
   };
 
   for (const [name, result] of results) {
-    if (
-      changeTypeSizes[result.minChangeType] >
-      changeTypeSizes[merged.minChangeType]
-    ) {
+    if (changeTypeSizes[result.minChangeType] > changeTypeSizes[merged.minChangeType]) {
       merged.minChangeType = result.minChangeType;
     }
 

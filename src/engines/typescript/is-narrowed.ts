@@ -1,12 +1,7 @@
 import ts from "typescript";
 import { TypeInformer } from "./type-informer";
 
-export function isNarrowed(
-  base: ts.Type,
-  baseInformer: TypeInformer,
-  target: ts.Type,
-  targetInformer: TypeInformer
-) {
+export function isNarrowed(base: ts.Type, baseInformer: TypeInformer, target: ts.Type, targetInformer: TypeInformer) {
   const baseChecker = baseInformer.checker;
   const targetChecker = targetInformer.checker;
 
@@ -16,10 +11,7 @@ export function isNarrowed(
   }
 
   // if target is now an any or unknown but the base is not
-  if (
-    base.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown) &&
-    !(target.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown))
-  ) {
+  if (base.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown) && !(target.flags & (ts.TypeFlags.Any | ts.TypeFlags.Unknown))) {
     return true;
   }
 
@@ -29,20 +21,13 @@ export function isNarrowed(
   }
 
   // if the base is a union type, check if the base is a superset of the target
-  if (
-    !!(target.flags & ts.TypeFlags.Union) &&
-    !!(base.flags & ts.TypeFlags.Union)
-  ) {
+  if (!!(target.flags & ts.TypeFlags.Union) && !!(base.flags & ts.TypeFlags.Union)) {
     const unionBase = base as ts.UnionType;
     const unionTarget = target as ts.UnionType;
 
     // place both unionBase and unionTarget types into sets
-    const baseTypes = new Set(
-      unionBase.types.map((t) => baseChecker.typeToString(t))
-    );
-    const targetTypes = new Set(
-      unionTarget.types.map((t) => targetChecker.typeToString(t))
-    );
+    const baseTypes = new Set(unionBase.types.map((t) => baseChecker.typeToString(t)));
+    const targetTypes = new Set(unionTarget.types.map((t) => targetChecker.typeToString(t)));
 
     // check if base has more types than target
     const newTypes = [...baseTypes].filter((t) => !targetTypes.has(t));
@@ -51,16 +36,11 @@ export function isNarrowed(
       return true;
     }
 
-    return unionBase.types.every((t) =>
-      isNarrowed(t, baseInformer, target, targetInformer)
-    );
+    return unionBase.types.every((t) => isNarrowed(t, baseInformer, target, targetInformer));
   }
 
   // check if object types are narrowed
-  if (
-    base.flags & ts.TypeFlags.StructuredType &&
-    target.flags & ts.TypeFlags.StructuredType
-  ) {
+  if (base.flags & ts.TypeFlags.StructuredType && target.flags & ts.TypeFlags.StructuredType) {
     const baseObject = base as ts.StructuredType;
     const targetObject = target as ts.StructuredType;
 
@@ -76,14 +56,7 @@ export function isNarrowed(
         return true;
       }
 
-      if (
-        isNarrowed(
-          baseProperties[name].type,
-          baseInformer,
-          targetProperties[name].type,
-          targetInformer
-        )
-      ) {
+      if (isNarrowed(baseProperties[name].type, baseInformer, targetProperties[name].type, targetInformer)) {
         return true;
       }
     }

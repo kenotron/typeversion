@@ -20,19 +20,11 @@ export class TypeInformer {
   }
 
   isTypeSymbol(symbol: ts.Symbol) {
-    if (
-      symbol.valueDeclaration &&
-      ts.isTypeOnlyImportOrExportDeclaration(symbol.valueDeclaration)
-    ) {
+    if (symbol.valueDeclaration && ts.isTypeOnlyImportOrExportDeclaration(symbol.valueDeclaration)) {
       return true;
     }
 
-    if (
-      symbol.declarations &&
-      symbol.declarations.every((declaration) =>
-        ts.isTypeOnlyImportOrExportDeclaration(declaration)
-      )
-    ) {
+    if (symbol.declarations && symbol.declarations.every((declaration) => ts.isTypeOnlyImportOrExportDeclaration(declaration))) {
       return true;
     }
 
@@ -56,10 +48,7 @@ export class TypeInformer {
 
   isEnum(type: ts.Type) {
     const symbol = this.getSymbolForType(type);
-    return (
-      (symbol && !!(symbol.getFlags() & ts.SymbolFlags.Enum)) ||
-      (symbol && !!(symbol.getFlags() & ts.SymbolFlags.ConstEnum))
-    );
+    return (symbol && !!(symbol.getFlags() & ts.SymbolFlags.Enum)) || (symbol && !!(symbol.getFlags() & ts.SymbolFlags.ConstEnum));
   }
 
   isFunction(type: ts.Type) {
@@ -78,9 +67,7 @@ export class TypeInformer {
   }
 
   isObjectType(type: ts.Type) {
-    return (
-      this.isClass(type) || this.isInterface(type) || this.isTypeLiteral(type)
-    );
+    return this.isClass(type) || this.isInterface(type) || this.isTypeLiteral(type);
   }
 
   /**
@@ -100,10 +87,7 @@ export class TypeInformer {
     let hasPrivateProperty = false;
 
     for (const [name, member] of symbol.members) {
-      if (
-        member.getFlags() & ts.SymbolFlags.Signature &&
-        name === ts.InternalSymbolName.New
-      ) {
+      if (member.getFlags() & ts.SymbolFlags.Signature && name === ts.InternalSymbolName.New) {
         hasConstructorSignature = true;
         break;
       }

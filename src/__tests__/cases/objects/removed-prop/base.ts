@@ -6,7 +6,7 @@ export interface IFace {
 export type IType = {
   a: string;
   b: string;
-}
+};
 
 export class Classy {
   a: string;

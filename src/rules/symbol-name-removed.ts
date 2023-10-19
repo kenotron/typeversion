@@ -20,9 +20,7 @@ const rule: Rule = {
       const targetExport = targetExportedNames.has(baseExport);
       if (!targetExport) {
         results.minChangeType = "major";
-        results.messages.push(
-          `Export "${baseExport}" was removed from the target`
-        );
+        results.messages.push(`Export "${baseExport}" was removed from the target`);
       }
     }
 

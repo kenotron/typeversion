@@ -4,7 +4,7 @@ export interface IFace {
 
 export type IType = {
   a: string;
-}
+};
 
 export class Classy {
   a: string;

@@ -5,8 +5,7 @@ import { collectProperties } from "../engines/typescript/collect-properties-of-o
 
 const rule: Rule = {
   name: "user-constructible-required-properties-added",
-  description:
-    "User constructible types (interface, type alias) that have new required properties added",
+  description: "User constructible types (interface, type alias) that have new required properties added",
   async check(context) {
     const {
       typescript: { base, target },
@@ -21,9 +20,7 @@ const rule: Rule = {
     const targetInformer = new TypeInformer(target.checker);
 
     const baseSymbolMap = new Map(base.exports.map((e) => [e.escapedName, e]));
-    const targetSymbolMap = new Map(
-      target.exports.map((e) => [e.escapedName, e])
-    );
+    const targetSymbolMap = new Map(target.exports.map((e) => [e.escapedName, e]));
 
     for (const [name, baseExport] of baseSymbolMap) {
       const baseExportType = baseInformer.getTypeOfExport(baseExport);
@@ -46,14 +43,9 @@ const rule: Rule = {
         for (const [propName, targetProp] of Object.entries(targetProps)) {
           const baseProp = baseProps[propName];
 
-          if (
-            !baseProp &&
-            !(targetProp.symbol.getFlags() & ts.SymbolFlags.Optional)
-          ) {
+          if (!baseProp && !(targetProp.symbol.getFlags() & ts.SymbolFlags.Optional)) {
             results.minChangeType = "major";
-            results.messages.push(
-              `New required property "${propName}" has been added to "${name}"`
-            );
+            results.messages.push(`New required property "${propName}" has been added to "${name}"`);
             continue;
           }
         }

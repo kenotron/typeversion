@@ -10,9 +10,7 @@ export function isPropertyPrivate(property: ts.Symbol) {
   let isPrivateFlag = false;
 
   for (const declaration of declarations) {
-    isPrivateFlag =
-      isPrivateFlag ||
-      !!(ts.getCombinedModifierFlags(declaration) & ts.ModifierFlags.Private);
+    isPrivateFlag = isPrivateFlag || !!(ts.getCombinedModifierFlags(declaration) & ts.ModifierFlags.Private);
   }
 
   return isPrivateFlag;

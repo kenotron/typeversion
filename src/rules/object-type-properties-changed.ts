@@ -6,8 +6,7 @@ import { TypeInformer } from "../engines/typescript/type-informer";
 
 const rule: Rule = {
   name: "object-type-properties-changed",
-  description:
-    "Object type properties that have changed in the types or have been removed",
+  description: "Object type properties that have changed in the types or have been removed",
   async check(context) {
     const {
       typescript: { base, target },
@@ -22,9 +21,7 @@ const rule: Rule = {
     const targetInformer = new TypeInformer(target.checker);
 
     const baseSymbolMap = new Map(base.exports.map((e) => [e.escapedName, e]));
-    const targetSymbolMap = new Map(
-      target.exports.map((e) => [e.escapedName, e])
-    );
+    const targetSymbolMap = new Map(target.exports.map((e) => [e.escapedName, e]));
 
     for (const [name, baseExport] of baseSymbolMap) {
       const baseExportType = baseInformer.getTypeOfExport(baseExport);
@@ -49,16 +46,13 @@ const rule: Rule = {
           const targetProp = targetProps[propName];
           if (!targetProp) {
             results.minChangeType = "major";
-            results.messages.push(
-              `Property "${propName}" has been removed from "${name}`
-            );
+            results.messages.push(`Property "${propName}" has been removed from "${name}`);
             continue;
           }
 
           if (
             ts.isPropertyDeclaration(baseProp.symbol.valueDeclaration) &&
-            ts.getCombinedModifierFlags(baseProp.symbol.valueDeclaration) &
-              ts.ModifierFlags.Readonly
+            ts.getCombinedModifierFlags(baseProp.symbol.valueDeclaration) & ts.ModifierFlags.Readonly
           ) {
             continue;
           }
@@ -97,11 +91,7 @@ function comparePropertyTypes(
   target: { type: ts.Type; checker: ts.TypeChecker; program: ts.Program }
 ) {
   const baseTypeString = getResolvedType(base.type, base.checker, base.program);
-  const targetTypeString = getResolvedType(
-    target.type,
-    target.checker,
-    target.program
-  );
+  const targetTypeString = getResolvedType(target.type, target.checker, target.program);
 
   if (baseTypeString !== targetTypeString) {
     return {
