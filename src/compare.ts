@@ -1,7 +1,5 @@
-import type { Rule, RuleResult } from "./types";
-
-import fs from "fs";
-import path from "path";
+import * as rules from "./rules";
+import type { RuleResult } from "./types";
 import { initializeContext } from "./engines/typescript/init";
 
 export interface CompareOptions {
@@ -22,17 +20,15 @@ const changeTypeSizes = {
   major: 3,
 };
 
-
 export async function compare(options: CompareOptions) {
   const { base, target } = options;
 
   const context = initializeContext({ base, target });
 
   const results = new Map<string, RuleResult>();
-  const rules = await getRules();
   const ruleNames = new Set<string>();
 
-  for (const rule of rules) {
+  for (const rule of Object.values(rules)) {
     // This is to keep the rule names unique: it seems that the author of this tool keeps forgetting about changing the NAME of the rule :)
     if (ruleNames.has(rule.name)) {
       throw new Error(`Duplicate rule name: ${rule.name}`);
@@ -44,16 +40,6 @@ export async function compare(options: CompareOptions) {
   }
 
   return mergeResults(results);
-}
-
-async function getRules() {
-  const files = fs.readdirSync(path.join(__dirname, "rules"));
-  const rules: Rule[] = [];
-  for (const file of files) {
-    const rule = (await import(path.join(__dirname, "rules", file))).default as Rule;
-    rules.push(rule);
-  }
-  return rules;
 }
 
 function mergeResults(results: Map<string, RuleResult>) {
