@@ -5,7 +5,9 @@
     "moduleResolution": "Node",
     "outDir": "lib",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDeclarationOnly": true,
   },
   "include": ["src"]
 }

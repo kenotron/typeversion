@@ -1,13 +1,10 @@
 import type { Rule, RuleResult } from "./types";
 import ts from "typescript";
 
-import { initializeContext } from "./engines/typescript/init";
-
 import fs from "fs";
 import path from "path";
-import { error } from "console";
 
-interface CompareOptions {
+export interface CompareOptions {
   base: {
     fileName: string;
     source: string;

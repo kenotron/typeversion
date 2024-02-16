@@ -1,15 +1,6 @@
 declare const CommandSource: {
   readonly AcceptSharedChannelInvitationDialog: "this_is_modified";
   readonly AccessibilitySettingsPanelButton: "AccessibilitySettingsPanelButton";
-  readonly AccountSelectionDialog: "AccountSelectionDialog";
-  readonly ActivityFeed: "ActivityFeed";
-  readonly ActivityFeedBellClick: "ActivityFeedBellClick";
-  readonly AcceptInvitationFromAccountAndSettingPage: "AcceptInvitationFromAccountAndSettingPage";
-  readonly AdaptiveCardInvokeButton: "AdaptiveCardInvokeButton";
-  readonly AddAccountFromButton: "AddAccountFromButton";
-  readonly AddAccountFromMeMenu: "AddAccountFromMeMenu";
-  readonly AddAccountFromSettings: "AddAccountFromSettings";
-  readonly AddCloudStorageFolderDialog: "AddCloudStorageFolderDialog";
 };
 
 type CommandSource = (typeof CommandSource)[keyof typeof CommandSource];
