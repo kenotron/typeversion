@@ -12,6 +12,7 @@
     "lib/**"
   ],
   "scripts": {
+    "build": "lage build",
     "webpack": "webpack --config webpack.config.js",
     "tsc": "tsc",
     "change": "beachball change",
