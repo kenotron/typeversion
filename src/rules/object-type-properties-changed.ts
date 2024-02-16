@@ -9,7 +9,7 @@ const rule: Rule = {
   description: "Object type properties that have changed in the types or have been removed",
   async check(context) {
     const {
-      typescript: { base, target },
+      typescript: { base, target, checker, program },
     } = context;
 
     const results: RuleResult = {
@@ -17,8 +17,8 @@ const rule: Rule = {
       messages: [],
     };
 
-    const baseInformer = new TypeInformer(base.checker);
-    const targetInformer = new TypeInformer(target.checker);
+    const baseInformer = new TypeInformer(checker);
+    const targetInformer = new TypeInformer(checker);
 
     const baseSymbolMap = new Map(base.exports.map((e) => [e.escapedName, e]));
     const targetSymbolMap = new Map(target.exports.map((e) => [e.escapedName, e]));
@@ -38,8 +38,8 @@ const rule: Rule = {
           throw new Error(`unable to determine type of the export: ${name}`);
         }
 
-        const baseProps = collectProperties(baseExportType, base.checker);
-        const targetProps = collectProperties(targetExportType, target.checker);
+        const baseProps = collectProperties(baseExportType, checker);
+        const targetProps = collectProperties(targetExportType, checker);
 
         // Check for changes in property types
         for (const [propName, baseProp] of Object.entries(baseProps)) {
@@ -61,13 +61,13 @@ const rule: Rule = {
             propName,
             {
               type: baseProp.type,
-              checker: base.checker,
-              program: base.program,
+              checker: checker,
+              program: program,
             },
             {
               type: targetProp.type,
-              checker: target.checker,
-              program: target.program,
+              checker: checker,
+              program: program,
             }
           );
 

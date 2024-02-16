@@ -20,13 +20,13 @@ exports[`Test case "args-newly-required" 1`] = `
 
 exports[`Test case "args-removed" 1`] = `
 {
-  "minChangeType": "none",
+  "minChangeType": "major",
 }
 `;
 
 exports[`Test case "function-to-arrow-function" 1`] = `
 {
-  "minChangeType": "none",
+  "minChangeType": "major",
 }
 `;
 

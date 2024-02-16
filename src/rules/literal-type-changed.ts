@@ -9,7 +9,7 @@ const rule: Rule = {
   description: "Object type properties that have changed in the types or have been removed",
   async check(context) {
     const {
-      typescript: { base, target },
+      typescript: { base, target, checker, program },
     } = context;
 
     const results: RuleResult = {
@@ -17,8 +17,8 @@ const rule: Rule = {
       messages: [],
     };
 
-    const baseInformer = new TypeInformer(base.checker);
-    const targetInformer = new TypeInformer(target.checker);
+    const baseInformer = new TypeInformer(checker);
+    const targetInformer = new TypeInformer(checker);
 
     const baseSymbolMap = new Map(base.exports.map((e) => [e.escapedName, e]));
     const targetSymbolMap = new Map(target.exports.map((e) => [e.escapedName, e]));
@@ -33,8 +33,8 @@ const rule: Rule = {
 
         const targetExportType = targetInformer.getTypeOfExport(targetExport);
 
-        const baseTypeString = getResolvedType(baseExportType, base.checker, base.program);
-        const targetTypeString = getResolvedType(targetExportType, target.checker, target.program);
+        const baseTypeString = getResolvedType(baseExportType, checker, program);
+        const targetTypeString = getResolvedType(targetExportType, checker, program);
 
         if (baseTypeString !== targetTypeString) {
           results.minChangeType = "major";
@@ -48,19 +48,3 @@ const rule: Rule = {
 };
 
 export default rule;
-
-function comparePropertyTypes(
-  name: string,
-  base: { type: ts.Type; checker: ts.TypeChecker; program: ts.Program },
-  target: { type: ts.Type; checker: ts.TypeChecker; program: ts.Program }
-) {
-  const baseTypeString = getResolvedType(base.type, base.checker, base.program);
-  const targetTypeString = getResolvedType(target.type, target.checker, target.program);
-
-  if (baseTypeString !== targetTypeString) {
-    return {
-      minChangeType: "major",
-      message: `Property "${name}" has changed type from "${baseTypeString}" to "${targetTypeString}"`,
-    };
-  }
-}

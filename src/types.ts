@@ -10,21 +10,18 @@ export interface RuleChecker {
   (options: RuleContext): Promise<RuleResult>;
 }
 
+export interface RuleSourceFileContext {
+  source: string;
+  exports: ts.Symbol[];
+  sourceFile: ts.SourceFile;
+}
+
 export interface RuleContext {
   typescript: {
-    base: {
-      source: string;
-      exports: ts.Symbol[];
-      checker: ts.TypeChecker;
-      program: ts.Program;
-    };
-
-    target: {
-      source: string;
-      exports: ts.Symbol[];
-      checker: ts.TypeChecker;
-      program: ts.Program;
-    };
+    checker: ts.TypeChecker;
+    program: ts.Program;
+    base: RuleSourceFileContext;
+    target: RuleSourceFileContext;
   };
 }
 

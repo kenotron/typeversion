@@ -36,5 +36,5 @@ export function getExportInfo(source: { fileName: string; source: string }) {
 
   const sourceFileSymbol = checker.getSymbolAtLocation(sourceFile);
   const srcExports = checker.getExportsOfModule(sourceFileSymbol);
-  return { exports: srcExports, checker, program };
+  return { exports: srcExports, checker, program, sourceFile };
 }

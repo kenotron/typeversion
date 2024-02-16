@@ -1,3 +1,4 @@
+import { RuleContext } from "../../types";
 import { getExportInfo } from "./get-export-info";
 
 export function initializeContext(options: {
@@ -9,13 +10,15 @@ export function initializeContext(options: {
     fileName: string;
     source: string;
   };
-}) {
+}): RuleContext {
   const { base, target } = options;
   const baseInfo = getExportInfo(base);
   const targetInfo = getExportInfo(target);
 
   return {
     typescript: {
+      checker: baseInfo.checker,
+      program: baseInfo.program,
       base: {
         source: base.source,
         ...baseInfo,

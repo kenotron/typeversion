@@ -3,6 +3,7 @@ import ts from "typescript";
 
 import fs from "fs";
 import path from "path";
+import { initializeContext } from "./engines/typescript/init";
 
 export interface CompareOptions {
   base: {
@@ -96,80 +97,25 @@ export async function compare(options: CompareOptions) {
 
   const checker = program.getTypeChecker();
 
-  const baseFileSymbol = checker.getSymbolAtLocation(baseSourceFile);
-  const baseExports = checker.getExportsOfModule(baseFileSymbol);
-  const baseExportMap = new Map(baseExports.map((e) => [e.escapedName, e]));
+  const context = initializeContext({ base, target });
 
-  const targetFileSymbol = checker.getSymbolAtLocation(targetSourceFile);
-  const targetExports = checker.getExportsOfModule(targetFileSymbol);
-  const targetExportMap = new Map(targetExports.map((e) => [e.escapedName, e]));
+  const results = new Map<string, RuleResult>();
+  const rules = await getRules();
+  const ruleNames = new Set<string>();
 
-  const messages: string[] = [];
-  let minChangeType: "none" | "patch" | "minor" | "major" = "none";
-  for (const [baseName, baseSymbol] of baseExportMap.entries()) {
-    // removed symbol is a breaking change
-    const targetSymbol = targetExportMap.get(baseName);
-    if (!targetSymbol) {
-      messages.push(`"${baseName}" is removed.`);
-      minChangeType = "major";
-      continue;
+  for (const rule of rules) {
+    // This is to keep the rule names unique: it seems that the author of this tool keeps forgetting about changing the NAME of the rule :)
+    if (ruleNames.has(rule.name)) {
+      throw new Error(`Duplicate rule name: ${rule.name}`);
     }
 
-    const baseType = checker.getTypeAtLocation(baseSymbol.getDeclarations()[0]);
-    const targetType = checker.getTypeAtLocation(targetSymbol.getDeclarations()[0]);
+    ruleNames.add(rule.name);
 
-    const errorOutputObject = {
-      errors: [],
-    };
-
-    const isAssignable = checker.checkTypeAssignableTo(
-      targetType,
-      baseType,
-      baseSymbol.getDeclarations()[0],
-      undefined,
-      undefined,
-      errorOutputObject
-    );
-
-    if (!isAssignable) {
-      const errors = errorOutputObject.errors.map((e) => ts.flattenDiagnosticMessageText(errorOutputObject.errors[0].messageText, "\n")).join("\n");
-      messages.push(errors);
-      minChangeType = "major";
-    }
+    const result = await rule.check(context);
+    results.set(rule.name, result);
   }
 
-  for (const targetName of targetExportMap.keys()) {
-    // added symbol is not a breaking change
-    const baseSymbol = baseExportMap.get(targetName);
-    if (!baseSymbol) {
-      minChangeType = "minor";
-    }
-  }
-
-  return {
-    messages,
-    minChangeType,
-  };
-
-  // const context = initializeContext({ base, target });
-
-  // const results = new Map<string, RuleResult>();
-  // const rules = await getRules();
-  // const ruleNames = new Set<string>();
-
-  // for (const rule of rules) {
-  //   // This is to keep the rule names unique: it seems that the author of this tool keeps forgetting about changing the NAME of the rule :)
-  //   if (ruleNames.has(rule.name)) {
-  //     throw new Error(`Duplicate rule name: ${rule.name}`);
-  //   }
-
-  //   ruleNames.add(rule.name);
-
-  //   const result = await rule.check(context);
-  //   results.set(rule.name, result);
-  // }
-
-  // return mergeResults(results);
+  return mergeResults(results);
 }
 
 async function getRules() {

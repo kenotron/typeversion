@@ -2,7 +2,7 @@
 
 exports[`Test case "added-symbol" 1`] = `
 {
-  "minChangeType": "minor",
+  "minChangeType": "none",
 }
 `;
 
@@ -20,25 +20,25 @@ exports[`Test case "removed-symbol" 1`] = `
 
 exports[`Test case "symbol-add-export-type" 1`] = `
 {
-  "minChangeType": "none",
+  "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-add-export-value" 1`] = `
 {
-  "minChangeType": "none",
+  "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-class-to-interface" 1`] = `
 {
-  "minChangeType": "none",
+  "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-class-to-type" 1`] = `
 {
-  "minChangeType": "none",
+  "minChangeType": "major",
 }
 `;
 
@@ -50,6 +50,6 @@ exports[`Test case "symbol-class-to-value-only" 1`] = `
 
 exports[`Test case "symbol-interface-to-type" 1`] = `
 {
-  "minChangeType": "none",
+  "minChangeType": "major",
 }
 `;

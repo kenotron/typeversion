@@ -2,6 +2,6 @@
 
 exports[`Test case "declared-non-exported-type-change" 1`] = `
 {
-  "minChangeType": "major",
+  "minChangeType": "none",
 }
 `;

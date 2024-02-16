@@ -10,7 +10,7 @@ const rule: Rule = {
   description: "Function params and return type that have changed in the types or have been removed",
   async check(context) {
     const {
-      typescript: { base, target },
+      typescript: { base, target, checker },
     } = context;
 
     const results: RuleResult = {
@@ -18,8 +18,8 @@ const rule: Rule = {
       messages: [],
     };
 
-    const baseInformer = new TypeInformer(base.checker);
-    const targetInformer = new TypeInformer(target.checker);
+    const baseInformer = new TypeInformer(checker);
+    const targetInformer = new TypeInformer(checker);
 
     const baseSymbolMap = new Map(base.exports.map((e) => [e.escapedName, e]));
     const targetSymbolMap = new Map(target.exports.map((e) => [e.escapedName, e]));
