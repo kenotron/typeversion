@@ -9,5 +9,5 @@
     "allowSyntheticDefaultImports": true,
     "emitDeclarationOnly": true,
   },
-  "include": ["src"]
+  "include": ["src", "archived/function-changed-to-arrow.ts", "archived/object-type-properties-changed.ts", "archived/literal-type-changed.ts"]
 }

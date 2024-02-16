@@ -66,7 +66,7 @@ exports[`Test case "function-to-arrow-function" 1`] = `
 -export function myFunction(a: string, b: number) {}
 +export const myFunction = (a: string, b: number) => {};
 ",
-  "minChangeType": "major",
+  "minChangeType": "none",
 }
 `;
 
