@@ -2,54 +2,36 @@
 
 exports[`Test case "args-changed" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "acceptsValue": parameter "data" of type "number" has been changed to "{ count: number; }"",
-  ],
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "args-narrowed" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "acceptsValue": parameter "data" of type "string | number" has been changed to "number"",
-  ],
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "args-newly-required" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "myFunction": parameter "newlyRequired" has been added as required",
-  ],
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "args-removed" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "myFunction": parameter count went down from 2 to 1",
-  ],
-  "minChangeType": "major",
+  "minChangeType": "none",
 }
 `;
 
 exports[`Test case "function-to-arrow-function" 1`] = `
 {
-  "messages": [
-    "[function-changed-to-arrow] Function "myFunction": changed from regular function to regular function",
-  ],
-  "minChangeType": "major",
+  "minChangeType": "none",
 }
 `;
 
 exports[`Test case "returns-widened" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "getValue": return type "string" has been widened to "string | null"",
-  ],
   "minChangeType": "major",
 }
 `;

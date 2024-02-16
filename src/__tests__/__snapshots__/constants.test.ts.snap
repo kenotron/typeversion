@@ -2,16 +2,12 @@
 
 exports[`Test case "constants-changed-types" 1`] = `
 {
-  "messages": [
-    "[literal-type-changed] Export "a" symbol changed from 5 to "hello"",
-  ],
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "constants-no-change" 1`] = `
 {
-  "messages": [],
   "minChangeType": "none",
 }
 `;

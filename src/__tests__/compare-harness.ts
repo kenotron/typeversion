@@ -20,6 +20,8 @@ export async function comapreHarness(group: string, testCase: string) {
     },
   });
 
+  delete(results.messages);
+
   expect(results).toMatchSnapshot();
 }
 

@@ -10,7 +10,7 @@
       "name": "Debugging with examples",
       "skipFiles": ["<node_internals>/**"],
       "runtimeArgs": ["-r", "@swc-node/register"],
-      "args": ["examples/source.ts", "examples/target.ts"],
+      "args": ["examples/base.ts", "examples/target.ts"],
       "program": "src/cli.ts",
       "outFiles": ["${workspaceFolder}/lib/**/*.js"],
       "sourceMaps": true

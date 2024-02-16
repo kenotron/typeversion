@@ -1,0 +1,25 @@
+diff --git a/lib/typescript.d.ts b/lib/typescript.d.ts
+index 100081fb8cccfa06e28ae4bcfc587de082f5024b..7190414d9dce0e7d3fc2d87020ed49fd03d4351f 100644
+--- a/lib/typescript.d.ts
++++ b/lib/typescript.d.ts
+@@ -6877,6 +6877,8 @@ declare namespace ts {
+          * ```
+          */
+         isTypeAssignableTo(source: Type, target: Type): boolean;
++
++        checkTypeAssignableTo(source: Type, target: Type, errorNode: Node | undefined, headMessage?: DiagnosticMessage, containingMessageChain?: () => DiagnosticMessageChain | undefined, errorOutputObject?: { errors?: Diagnostic[]; }): boolean
+         /**
+          * True if this type is the `Array` or `ReadonlyArray` type from lib.d.ts.
+          * This function will _not_ return true if passed a type which
+diff --git a/lib/typescript.js b/lib/typescript.js
+index 6cd6c983a31b795521183cbb4d4f69646075ef22..32ff1e81116a4c1b967493aaf55db6ad6d2adeee 100644
+--- a/lib/typescript.js
++++ b/lib/typescript.js
+@@ -46407,6 +46407,7 @@ ${lanes.join("\n")}
+       getApparentType,
+       getUnionType,
+       isTypeAssignableTo,
++      checkTypeAssignableTo,
+       createAnonymousType,
+       createSignature,
+       createSymbol,
