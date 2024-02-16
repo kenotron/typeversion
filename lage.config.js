@@ -19,16 +19,19 @@ module.exports = {
       type: "npmScript",
       dependsOn: [],
       inputs: ["src/**/*"],
+      outputs: ["dist/**"],
     },
     "webpack:cjs": {
       type: "npmScript",
       dependsOn: [],
       inputs: ["src/**/*"],
+      outputs: ["dist/**"],
     },
     tsc: {
       type: "npmScript",
       dependsOn: [],
       inputs: ["src/**/*"],
+      outputs: ["lib/**"],
     },
   },
   cacheOptions: {
