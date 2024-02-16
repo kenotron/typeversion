@@ -1,13 +1,10 @@
 const path = require("path");
 
-/** @type {import('webpack').Configuration} */
-module.exports = {
+module.exports.baseConfig = {
   mode: "production",
   entry: "./src/index.ts",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "typeversion.js",
-    libraryTarget: "commonjs2",
   },
   devtool: "source-map",
   module: {
@@ -31,7 +28,6 @@ module.exports = {
       },
     ],
   },
-  target: "node",
   resolve: {
     extensions: [".ts", ".js"],
   },
