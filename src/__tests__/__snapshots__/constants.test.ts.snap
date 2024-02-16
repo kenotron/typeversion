@@ -2,12 +2,28 @@
 
 exports[`Test case "constants-changed-types" 1`] = `
 {
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,1 @@
+-export const a = 5;
++export const a = "hello";
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "constants-no-change" 1`] = `
 {
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,1 @@
+-export const a: number = 5;
++export const a: number = 6;
+",
   "minChangeType": "none",
 }
 `;

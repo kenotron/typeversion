@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { test, expect } from "@jest/globals";
 import { compare } from "../compare";
+import * as Diff from 'diff';
 
 export async function comapreHarness(group: string, testCase: string) {
   const testCasePath = getCasePath(group, testCase);
@@ -20,9 +21,10 @@ export async function comapreHarness(group: string, testCase: string) {
     },
   });
 
-  delete(results.messages);
+  delete results.messages;
+  const patchStr = Diff.createPatch("patch", base, target);
 
-  expect(results).toMatchSnapshot();
+  expect({ minChangeType: results.minChangeType, diff: patchStr }).toMatchSnapshot();
 }
 
 export function getCasesByGroup(group: string) {

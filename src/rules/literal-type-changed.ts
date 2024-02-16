@@ -1,7 +1,6 @@
 import ts from "typescript";
 import { Rule, RuleResult } from "../types";
 import { getResolvedType } from "../engines/typescript/resolve-type-structure";
-import { collectProperties } from "../engines/typescript/collect-properties-of-object-type";
 import { TypeInformer } from "../engines/typescript/type-informer";
 
 const rule: Rule = {

@@ -24,14 +24,12 @@ const rule: Rule = {
     const targetExports = checker.getExportsOfModule(targetFileSymbol);
     const targetExportMap = new Map(targetExports.map((e) => [e.escapedName, e]));
 
-    const messages: string[] = [];
-    let minChangeType: "none" | "patch" | "minor" | "major" = "none";
     for (const [baseName, baseSymbol] of baseExportMap.entries()) {
       // removed symbol is a breaking change
       const targetSymbol = targetExportMap.get(baseName);
       if (!targetSymbol) {
-        messages.push(`"${baseName}" is removed.`);
-        minChangeType = "major";
+        results.messages.push(`"${baseName}" is removed.`);
+        results.minChangeType = "major";
         continue;
       }
 
@@ -55,8 +53,8 @@ const rule: Rule = {
         const errors = errorOutputObject.errors
           .map((e) => ts.flattenDiagnosticMessageText(errorOutputObject.errors[0].messageText, "\n"))
           .join("\n");
-        messages.push(errors);
-        minChangeType = "major";
+        results.messages.push(errors);
+        results.minChangeType = "major";
       }
     }
 

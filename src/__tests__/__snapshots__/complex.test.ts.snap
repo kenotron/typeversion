@@ -2,6 +2,19 @@
 
 exports[`Test case "declared-non-exported-type-change" 1`] = `
 {
-  "minChangeType": "none",
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,6 +1,6 @@
+ declare const CommandSource: {
+-  readonly AcceptSharedChannelInvitationDialog: "AcceptSharedChannelInvtationDialog";
++  readonly AcceptSharedChannelInvitationDialog: "this_is_modified";
+   readonly AccessibilitySettingsPanelButton: "AccessibilitySettingsPanelButton";
+ };
+ 
+ type CommandSource = (typeof CommandSource)[keyof typeof CommandSource];
+",
+  "minChangeType": "major",
 }
 `;

@@ -2,24 +2,108 @@
 
 exports[`Test case "non-readonly-prop-type-change" 1`] = `
 {
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,19 +1,21 @@
+ export interface IFace {
+   a: string;
+-  b: string;
++  b: number;
+ }
+ 
++type MyString = string;
++
+ export interface IFaceNoChange {
+   a: string;
+-  b: string;
++  b: MyString;
+ }
+ 
+ export interface IWidened {
+-  a: string;
++  a: string | number;
+   b: string;
+ }
+ 
+ export class IClassWidened {
+-  a: string;
++  a: string | string[];
+   b: string;
+ }
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "non-user-constructible-checks" 1`] = `
 {
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,14 +1,14 @@
+ export interface INonUserConstructible {
+   new (): INonUserConstructible;
+-  a: string;
++  a?: string;
+ }
+ 
+ export interface IWidened {
+   new (): IWidened;
+-  readonly a: string;
++  readonly a: string | string[];
+ }
+ 
+ export interface INonUserConstructibleOptional {
+   new (): INonUserConstructibleOptional;
+-  readonly a: string;
++  readonly a?: string;
+ }
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "removed-prop" 1`] = `
 {
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,14 +1,11 @@
+ export interface IFace {
+   a: string;
+-  b: string;
+ }
+ 
+ export type IType = {
+   a: string;
+-  b: string;
+ };
+ 
+ export class Classy {
+   a: string;
+-  b: string;
+ }
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "user-constructible-checks" 1`] = `
 {
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,3 +1,4 @@
+ export interface IUserConstructible {
+   a: string;
++  b: string;
+ }
+",
   "minChangeType": "major",
 }
 `;
