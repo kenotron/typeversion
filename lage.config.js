@@ -6,29 +6,18 @@ module.exports = {
       dependsOn: ["tsc", "webpack"],
       inputs: [],
     },
-    "webpack": {
-      type: "noop",
-      dependsOn: ["webpack:esm", "webpack:cjs"],
-      inputs: [],
-    },
-    "webpack:esm": {
+    webpack: {
       type: "npmScript",
       dependsOn: [],
-      inputs: ["src/**/*"],
-    },
-    "webpack:cjs": {
-      type: "npmScript",
-      dependsOn: [],
-      inputs: ["src/**/*"],
+      inputs: ["src/**/*"]
     },
     tsc: {
       type: "npmScript",
       dependsOn: [],
-      inputs: ["src/**/*"],
+      inputs: ["src/**/*"]
     },
   },
   cacheOptions: {
-    environmentGlob: ["*.js", "*.json"],
-    outputGlob: ["dist/**", "lib/**"],
+
   },
 };

@@ -5,24 +5,15 @@
     "url": "https://github.com/kenotron/typeversion"
   },
   "license": "MIT",
-  "main": "dist/typeversion.cjs",
-  "module": "dist/typeversion.mjs",
+  "main": "dist/typeversion.js",
   "types": "lib/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "import": "./dist/typeversion.mjs",
-      "require": "./dist/typeversion.cjs"
-    }
-  },
   "files": [
     "dist/**",
     "lib/**"
   ],
   "scripts": {
     "build": "lage build",
-    "webpack:cjs": "webpack --config webpack.commonjs.js",
-    "webpack:esm": "webpack --config webpack.esmodule.js",
+    "webpack": "webpack --config webpack.config.js",
     "tsc": "tsc",
     "change": "beachball change",
     "checkchange": "beachball check",
@@ -54,8 +45,7 @@
     "swc-loader": "^0.2.6",
     "typescript": "patch:typescript@npm%3A5.4.0-beta#~/.yarn/patches/typescript-npm-5.4.0-beta-db25933c00.patch",
     "webpack": "^5.90.2",
-    "webpack-cli": "^5.1.4",
-    "webpack-merge": "^5.10.0"
+    "webpack-cli": "^5.1.4"
   },
   "packageManager": "yarn@4.1.0"
 }
