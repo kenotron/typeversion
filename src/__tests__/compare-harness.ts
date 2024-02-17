@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { test, expect } from "@jest/globals";
 import { compare } from "../compare";
-import * as Diff from 'diff';
+import * as Diff from "diff";
 
 export async function comapreHarness(group: string, testCase: string) {
   const testCasePath = getCasePath(group, testCase);

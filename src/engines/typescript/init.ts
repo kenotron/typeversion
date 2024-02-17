@@ -96,12 +96,12 @@ export function initializeContext(options: {
       base: {
         source: base.source,
         exports: baseExports,
-        sourceFile: baseSourceFile
+        sourceFile: baseSourceFile,
       },
       target: {
         source: target.source,
         exports: targetExports,
-        sourceFile: targetSourceFile
+        sourceFile: targetSourceFile,
       },
     },
   };

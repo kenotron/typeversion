@@ -7,7 +7,12 @@
     "esModuleInterop": true,
     "declaration": true,
     "allowSyntheticDefaultImports": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": true
   },
-  "include": ["src", "archived/function-changed-to-arrow.ts", "archived/object-type-properties-changed.ts", "archived/literal-type-changed.ts"]
+  "include": [
+    "src",
+    "archived/function-changed-to-arrow.ts",
+    "archived/object-type-properties-changed.ts",
+    "archived/literal-type-changed.ts"
+  ]
 }
