@@ -1,7 +1,0 @@
-{
-  "type": "major",
-  "comment": "Moving to using a typescript internal feature to get at the assignability",
-  "packageName": "typeversion",
-  "email": "kchau@microsoft.com",
-  "dependentChangeType": "patch"
-}

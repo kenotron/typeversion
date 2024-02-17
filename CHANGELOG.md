@@ -1,8 +1,16 @@
 # Change Log - typeversion
 
-This log was last generated on Thu, 19 Oct 2023 19:27:41 GMT and should not be manually modified.
+This log was last generated on Sat, 17 Feb 2024 00:12:07 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.0.0
+
+Sat, 17 Feb 2024 00:12:07 GMT
+
+### Major changes
+
+- Moving to using a typescript internal feature to get at the assignability (kchau@microsoft.com)
 
 ## 0.4.2
 

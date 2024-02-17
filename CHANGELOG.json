@@ -2,6 +2,21 @@
   "name": "typeversion",
   "entries": [
     {
+      "date": "Sat, 17 Feb 2024 00:12:07 GMT",
+      "version": "1.0.0",
+      "tag": "typeversion_v1.0.0",
+      "comments": {
+        "major": [
+          {
+            "author": "kchau@microsoft.com",
+            "package": "typeversion",
+            "commit": "689215db9eb3c0d1ffb1742f046711f079e806bf",
+            "comment": "Moving to using a typescript internal feature to get at the assignability"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 19 Oct 2023 19:27:41 GMT",
       "version": "0.4.2",
       "tag": "typeversion_v0.4.2",
