@@ -1,53 +1,32 @@
 # Semver checker for TypeScript
 
-There is a prior art at https://semver-ts.org that describes a spec about when the output types have breaking changes. We can leverage this information to build up a set of rules with the help of the typechecker on a "before" and "after" basis.
+This is a node library that helps you find incompatibilities in your TypeScript library. The way it achieve this is to draw inspiration from https://semver-ts.org. We heavily leverage TypeScript itself with an internal function that helps us retrieve compatibility information.
 
-## Run the tool example like this:
+A library author would have a workflow similar to the following:
 
-`npx typeversion examples/source.ts examples/target.ts`
+1. bundle and check in a single d.ts representing your public API
+  a. you may find it helpful to use `api-extractor` or `dts-bundle-generator` to create that single d.ts file
+2. on a CI / PR job, create a d.ts that represent the updated version of the public API
+3. create a tool that uses `typeversion` to compare before and after d.ts to inform whether the change is a breaking change or not
 
-### Example of adding a new required property in an interface
+## Node API
 
 ```ts
-// filename: base.ts
-export interface F {
-	a: string;
+import { compare } from "typeversion";
+import fs from "fs";
+
+async function main() {
+  const results = await compare({
+    base: { fileName: "base.ts", source: fs.readFileSync("base.ts", "utf-8") },
+    target: {
+      fileName: "target.ts",
+      source: fs.readFileSync("target.ts", "utf-8"),
+    },
+  });
+
+  // results now contain the recommended change type and optionally a list of messages that indicate why `typeversion` recommends
+  // a certain kind of change
 }
-```
 
-```ts
-// filename: target.ts
-export interface F {
-	a: string;
-  b: string;
-}
-```
-
-Now running the tool should give you a hint about what caused the breaking change
-
-```
-$ npx typeversion base.ts target.ts
-Recommended change type: major
-Reasons:
-  [user-constructible-required-properties-added] New required property "b" has been added to "F"
-```
-
-## Experimental node.js API
-
-```ts
-import { compare } from 'type-compare';
-
-/**
- * @returns { minChangeType: `none` | `patch` | `minor` | `major`; messages: string[]; }
- */
-const results = compare({
-  base: {
-    fileName: 'base.d.ts',
-    source: 'the source code for base'
-  },
-  target: {
-    fileName: 'target.d.ts',
-    source: 'the source code for target'
-  }
-});
+main();
 ```

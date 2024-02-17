@@ -2,54 +2,91 @@
 
 exports[`Test case "args-changed" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "acceptsValue": parameter "data" of type "number" has been changed to "{ count: number; }"",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,1 @@
+-export function acceptsValue(data: number): void {}
++export function acceptsValue(data: { count: number }): void {}
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "args-narrowed" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "acceptsValue": parameter "data" of type "string | number" has been changed to "number"",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,1 @@
+-export function acceptsValue(data: string | number): void {}
++export function acceptsValue(data: number): void {}
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "args-newly-required" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "myFunction": parameter "newlyRequired" has been added as required",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,1 @@
+-export function myFunction(a: string) {}
++export function myFunction(a: string, newlyRequired: string) {}
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "args-removed" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "myFunction": parameter count went down from 2 to 1",
-  ],
-  "minChangeType": "major",
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,1 @@
+-export function myFunction(a: string, removed: number) {}
++export function myFunction(a: string) {}
+",
+  "minChangeType": "none",
 }
 `;
 
 exports[`Test case "function-to-arrow-function" 1`] = `
 {
-  "messages": [
-    "[function-changed-to-arrow] Function "myFunction": changed from regular function to regular function",
-  ],
-  "minChangeType": "major",
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,1 @@
+-export function myFunction(a: string, b: number) {}
++export const myFunction = (a: string, b: number) => {};
+",
+  "minChangeType": "none",
 }
 `;
 
 exports[`Test case "returns-widened" 1`] = `
 {
-  "messages": [
-    "[function-params-and-return-type-changed] Function "getValue": return type "string" has been widened to "string | null"",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,3 +1,7 @@
+-export function getValue(): string {
+-  return "hello";
++export function getValue(): string | null {
++  if (Math.random() > 0.5) {
++    return "hello";
++  }
++
++  return null;
+ }
+",
   "minChangeType": "major",
 }
 `;

@@ -2,86 +2,146 @@
 
 exports[`Test case "added-symbol" 1`] = `
 {
-  "messages": [],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,2 @@
+ export class Foo {}
++export class Bar {}
+",
   "minChangeType": "none",
 }
 `;
 
 exports[`Test case "namespace-to-object-type" 1`] = `
 {
-  "messages": [
-    "[literal-type-changed] Export "F" symbol changed from { a: 5, b: 5 } to { a: number, b: number }",
-    "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,4 +1,4 @@
+-export namespace F {
+-  export const a = 5;
+-  export const b = 5;
+-}
++export const F = {
++  a: 5,
++  b: 5,
++};
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "removed-symbol" 1`] = `
 {
-  "messages": [
-    "[symbol-name-removed] Export "Bar" was removed from the target",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,2 +1,1 @@
+ export class Foo {}
+-export class Bar {}
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-add-export-type" 1`] = `
 {
-  "messages": [
-    "[literal-type-changed] Export "F" symbol changed from any to F",
-    "[symbol-kind-changed] Export "F" symbol kind changed from a non-type symbol to a type symbol",
-    "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,2 @@
+ export namespace F {}
++export type F = Record<string, string>;
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-add-export-value" 1`] = `
 {
-  "messages": [
-    "[symbol-kind-changed] Export "F" symbol kind changed from a non-value symbol to a value symbol",
-    "[symbol-kind-changed] Export "F" symbol has changed (namespace, class, interface, or function).",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,1 +1,2 @@
+ export interface F {}
++export const F = {};
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-class-to-interface" 1`] = `
 {
-  "messages": [
-    "[symbol-kind-changed] Export "Foo" symbol kind changed from a value symbol to a non-value symbol",
-    "[symbol-kind-changed] Export "Foo" symbol has changed (namespace, class, interface, or function).",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,3 +1,3 @@
+-export class Foo {
++export interface Foo {
+   a: string;
+ }
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-class-to-type" 1`] = `
 {
-  "messages": [
-    "[symbol-kind-changed] Export "Foo" symbol kind changed from a value symbol to a non-value symbol",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,3 +1,5 @@
+-export class Foo {
++class Foo {
+   a: string;
+ }
++
++export type { Foo };
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-class-to-value-only" 1`] = `
 {
-  "messages": [
-    "[object-type-properties-changed] Property "a" has been removed from "Foo",
-    "[symbol-kind-changed] Export "Foo" symbol kind changed from a type symbol to a non-type symbol",
-    "[user-constructible-required-properties-added] New required property "prototype" has been added to "Foo"",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,3 +1,5 @@
+-export class Foo {
++class _Foo {
+   a: string;
+ }
++
++export let Foo: typeof _Foo;
+",
   "minChangeType": "major",
 }
 `;
 
 exports[`Test case "symbol-interface-to-type" 1`] = `
 {
-  "messages": [
-    "[symbol-kind-changed] Export "Foo" symbol has changed (namespace, class, interface, or function).",
-  ],
+  "diff": "Index: patch
+===================================================================
+--- patch
++++ patch
+@@ -1,4 +1,4 @@
+-export interface Foo {
++export type Foo = {
+   a: string;
+   b: number;
+-}
++};
+",
   "minChangeType": "major",
 }
 `;

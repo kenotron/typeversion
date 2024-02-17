@@ -8,7 +8,7 @@ const rule: Rule = {
   description: "User constructible types (interface, type alias) that have new required properties added",
   async check(context) {
     const {
-      typescript: { base, target },
+      typescript: { base, target, checker },
     } = context;
 
     const results: RuleResult = {
@@ -16,8 +16,8 @@ const rule: Rule = {
       messages: [],
     };
 
-    const baseInformer = new TypeInformer(base.checker);
-    const targetInformer = new TypeInformer(target.checker);
+    const baseInformer = new TypeInformer(checker);
+    const targetInformer = new TypeInformer(checker);
 
     const baseSymbolMap = new Map(base.exports.map((e) => [e.escapedName, e]));
     const targetSymbolMap = new Map(target.exports.map((e) => [e.escapedName, e]));
@@ -36,8 +36,8 @@ const rule: Rule = {
           throw new Error(`unable to determine type of the export: ${name}`);
         }
 
-        const baseProps = collectProperties(baseExportType, base.checker);
-        const targetProps = collectProperties(targetExportType, target.checker);
+        const baseProps = collectProperties(baseExportType, checker);
+        const targetProps = collectProperties(targetExportType, checker);
 
         // Check for new required properties
         for (const [propName, targetProp] of Object.entries(targetProps)) {
